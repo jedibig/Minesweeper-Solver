@@ -80,8 +80,13 @@ public class MyAI extends AI {
 	public void uncoverZero(int x, int y){
 		for(int i = -1;i < 1;i++){
 			for(int j = -1;j < 1;j++){
-				// Check for boundaries
 				if(i == 0 && j == 0)
+					continue;
+				if(x+i < 1 || y+i < 1)
+					continue;
+				if(x+i > rowSize || y+i > colSize)
+					continue;
+				if(board[x(x+i)][y(y+i)] != 0)
 					continue;
 				else {
 					int coor[] = {x+i, y+i};
