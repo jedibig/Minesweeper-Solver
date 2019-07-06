@@ -140,9 +140,7 @@ public class MyAI extends AI {
 					continue;
 				if(i == 0 && j == 0)
 					continue;
-				if(coor.x < 1 || coor.y < 1)
-					continue;
-				if(coor.x > rowSize || coor.y > colSize)
+				if(inBoundaries(coor.x, coor.y))
 					continue;
 				if(board[x(coor.x)][y(coor.y)] != 0)
 					continue;
@@ -150,6 +148,10 @@ public class MyAI extends AI {
 				needUncovering.add(coor);
 			}
 		}
+	}
+
+	private boolean inBoundaries(int x, int y){
+		return x < 1 || y < 1 || x > rowSize || y > colSize;
 	}
 
 	// Check if value in list
