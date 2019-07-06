@@ -92,7 +92,7 @@ public class MyAI extends AI {
 					if (uncover == null)
 						safeTile.add(currCoor);
 					else
-						return new Action(Action.ACTION.UNCOVER, uncover.x, uncover.y);
+						return new Action(Action.ACTION.FLAG, uncover.x, uncover.y);
 				}
 			}		
 		}
