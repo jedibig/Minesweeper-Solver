@@ -18,6 +18,7 @@ NOTES:       - If you are having trouble understanding how the shell
 
 package src;
 import src.Action.ACTION;
+import java.util.LinkedList;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -39,37 +40,64 @@ public class MyAI extends AI {
 	@SuppressWarnings("unchecked")
 
 	private int[][] board;
+	private int currX;
+	private int currY;
+	private LinkedList<int[]> needUncovering;
 
 
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
 		// ################### Implement Constructor (required) ####################
-		board = new int[rowDimension][colDimension];
+		board = new int[colDimension][rowDimension];
+		currX = startX;
+		currY = startY;
+		needUncovering = new LinkedList<int[]>();
 	}
 	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
+		System.out.println(number);
+		board[x(currX)][y(currY)] = number == 0 ? -1 : number;
 
-		return new Action(ACTION.LEAVE);
+		if (number == 0)
+			uncoverZero(currX,currY);
+
+		if(needUncovering.size() > 0){
+			int[] coor = needUncovering.pop();
+			currX = coor[0];
+			currY = coor[1];
+			return new Action(Action.ACTION.UNCOVER, currX, currY);
+		}
+
+		return new Action(Action.ACTION.FLAG, currX, currY);
+
+//		return new Action(ACTION.LEAVE);
 	}
 
 	// ################### Helper Functions Go Here (optional) ##################
 	// ...
 
+	// If value related to tile is 0, call this function
 	public void uncoverZero(int x, int y){
 		for(int i = -1;i < 1;i++){
 			for(int j = -1;j < 1;j++){
+				// Check for boundaries
 				if(i == 0 && j == 0)
 					continue;
-				else
-					break;
+				else {
+					int coor[] = {x+i, y+i};
+					needUncovering.add(coor);
+				}
 			}
 		}
 	}
 
+
+	// Get the x value in local array board
 	private int x(int xVal){
 		return xVal-1;
 	}
 
+	// Get the y value in local array board
 	private int y(int yVal){
 		return yVal-1;
 	}
