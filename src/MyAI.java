@@ -40,6 +40,8 @@ public class MyAI extends AI {
 	@SuppressWarnings("unchecked")
 
 	private int[][] board;
+	private int rowSize;
+	private int colSize;
 	private int currX;
 	private int currY;
 	private LinkedList<int[]> needUncovering;
@@ -50,6 +52,8 @@ public class MyAI extends AI {
 		board = new int[colDimension][rowDimension];
 		currX = startX;
 		currY = startY;
+		rowSize = rowDimension;
+		colSize = colDimension;
 		needUncovering = new LinkedList<int[]>();
 	}
 	
