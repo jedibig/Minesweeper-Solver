@@ -19,6 +19,8 @@ NOTES:       - If you are having trouble understanding how the shell
 package src;
 import src.Action.ACTION;
 import java.util.LinkedList;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -45,6 +47,7 @@ public class MyAI extends AI {
 	private int currX;
 	private int currY;
 	private LinkedList<int[]> needUncovering;
+	private LinkedList<int[]> safeTile;
 
 
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
@@ -55,26 +58,31 @@ public class MyAI extends AI {
 		rowSize = rowDimension;
 		colSize = colDimension;
 		needUncovering = new LinkedList<int[]>();
+		needUncovering = new LinkedList<int[]>();
 	}
 	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
+		System.out.printf("currX: %d 	currY: %d\n", currX, currY);
 		System.out.println(number);
 		board[x(currX)][y(currY)] = number == 0 ? -1 : number;
 
+
 		if (number == 0)
 			uncoverZero(currX,currY);
-
+		else {
+			safeTile.add()
+		}
+		
 		if(needUncovering.size() > 0){
 			int[] coor = needUncovering.pop();
 			currX = coor[0];
 			currY = coor[1];
 			return new Action(Action.ACTION.UNCOVER, currX, currY);
-		}
+		} 
+		else return null;
 
-		return new Action(Action.ACTION.FLAG, currX, currY);
-
-//		return new Action(ACTION.LEAVE);
+		
 	}
 
 	// ################### Helper Functions Go Here (optional) ##################
@@ -82,22 +90,35 @@ public class MyAI extends AI {
 
 	// If value related to tile is 0, call this function
 	public void uncoverZero(int x, int y){
-		for(int i = -1;i < 1;i++){
-			for(int j = -1;j < 1;j++){
+		for(int i = -1;i <= 1;i++){
+			for(int j = -1;j <= 1;j++){
+				int coor[] = {x+i, y+j};
+
+				// System.out.printf("i: %d	j: %d\n", i, j);
+				if(isInList(coor))
+					continue;
 				if(i == 0 && j == 0)
 					continue;
-				if(x+i < 1 || y+i < 1)
+				if(x+i < 1 || y+j < 1)
 					continue;
-				if(x+i > rowSize || y+i > colSize)
+				if(x+i > rowSize || y+j > colSize)
 					continue;
-				if(board[x(x+i)][y(y+i)] != 0)
+				if(board[x(x+i)][y(y+j)] != 0)
 					continue;
-				else {
-					int coor[] = {x+i, y+i};
-					needUncovering.add(coor);
-				}
+				
+				 
+				needUncovering.add(coor);
 			}
 		}
+	}
+
+	// Check if value in list
+	private boolean isInList(int[] pair){
+		for (int[] e: needUncovering){
+			if (e[0] == pair[0] && e[1] == pair[1])
+				return true;
+		} 
+		return false;
 	}
 
 
