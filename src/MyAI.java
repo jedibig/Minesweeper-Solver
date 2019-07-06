@@ -101,7 +101,11 @@ public class MyAI extends AI {
 					continue;
 				if(board[x(coor.x)][y(coor.y)] != 0)
 					continue;
+<<<<<<< HEAD
 				
+=======
+				 
+>>>>>>> 87e337965bd705cc7c11712ef2617734a56c6458
 				needUncovering.add(coor);
 			}
 		}
@@ -141,5 +145,22 @@ public class MyAI extends AI {
 			if (object.x == object.x && object.y == y)
 		}
 
+	// Get untouched tile
+	private Tuples untouched(int x, int y){
+		Tuple coor;
+		int zeroCount = 0;
+		for(int i = -1;i <= 1;i++){
+			for(int j = -1;j <= 1;j++){
+				if(board[x(x+i)][y(y+j)] == 0){
+					coor.x = x+i;
+					coor.y = y+j;
+					zeroCount++;
+				}
+			}
+		}
+		if(zeroCount > 1)
+			return null;
+		else if(zeroCount == 1)
+			return coor;
 	}
 }
