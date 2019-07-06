@@ -105,7 +105,6 @@ public class MyAI extends AI {
 					continue;
 				if(board[x(x+i)][y(y+j)] != 0)
 					continue;
-				
 				 
 				needUncovering.add(coor);
 			}
@@ -130,5 +129,24 @@ public class MyAI extends AI {
 	// Get the y value in local array board
 	private int y(int yVal){
 		return yVal-1;
+	}
+
+	// Get untouched tile
+	private Tuples untouched(int x, int y){
+		Tuple coor;
+		int zeroCount = 0;
+		for(int i = -1;i <= 1;i++){
+			for(int j = -1;j <= 1;j++){
+				if(board[x(x+i)][y(y+j)] == 0){
+					coor.x = x+i;
+					coor.y = y+j;
+					zeroCount++;
+				}
+			}
+		}
+		if(zeroCount > 1)
+			return null;
+		else if(zeroCount == 1)
+			return coor;
 	}
 }
