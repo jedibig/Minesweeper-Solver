@@ -58,7 +58,7 @@ public class MyAI extends AI {
 		rowSize = rowDimension;
 		colSize = colDimension;
 		needUncovering = new LinkedList<Tuple>();
-		needUncovering = new LinkedList<Tuple>();
+		safeTile = new LinkedList<Tuple>();
 	}
 	
 	// ################## Implement getAction(), (required) #####################
@@ -70,26 +70,71 @@ public class MyAI extends AI {
 
 		if (number == 0)
 			uncoverZero(currX,currY);
+		else {
+			safeTile.add(new Tuple(currX,currY));
+		}
 		
+
 		if(needUncovering.size() > 0){
 			Tuple coor = needUncovering.pop();
 			currX = coor.x;
 			currY = coor.y;
 			return new Action(Action.ACTION.UNCOVER, currX, currY);
 		} 
-		else return null;
+		else if (safeTile.size() > 0){
+			Tuple uncover;
+			while (safeTile.size() > 0){
+				// Possible circular loop
+				Tuple currCoor = safeTile.pop();
 
+				if (board[x(currCoor.x)][y(currCoor.y)] == 1){
+					uncover = checkIfOneUncovered(currCoor.x, currCoor.y);
+					if (uncover == null)
+						safeTile.add(currCoor);
+					else
+						return new Action(Action.ACTION.UNCOVER, uncover.x, uncover.y);
+				}
+			}		
+		}
+
+		return null;
 		
 	}
 
 	// ################### Helper Functions Go Here (optional) ##################
 	// ...
 
+	private class Tuple {
+		public int x;
+		public int y;
+
+		public Tuple(int x, int y){
+			this.x = x;
+			this.y = y;
+		}
+
+		public Tuple(){
+			this.x = -1;
+			this.y = -1;
+		}
+
+		@Override
+		public boolean equals(Object o){
+			if (o == this)
+				return true;
+			if (!(o instanceof Tuple)) {
+				return false;
+			}
+			Tuple object = (Tuple) o;
+			return object.x == object.x && object.y == y;
+		}
+	}
+
 	// If value related to tile is 0, call this function
 	public void uncoverZero(int x, int y){
 		for(int i = -1;i <= 1;i++){
 			for(int j = -1;j <= 1;j++){
-				Tuple coor = Tuple(x+i, y+j);
+				Tuple coor = new Tuple(x+i, y+j);
 
 				if(isInList(coor))
 					continue;
@@ -101,11 +146,7 @@ public class MyAI extends AI {
 					continue;
 				if(board[x(coor.x)][y(coor.y)] != 0)
 					continue;
-<<<<<<< HEAD
 				
-=======
-				 
->>>>>>> 87e337965bd705cc7c11712ef2617734a56c6458
 				needUncovering.add(coor);
 			}
 		}
@@ -131,23 +172,11 @@ public class MyAI extends AI {
 		return yVal-1;
 	}
 
-	private class Tuple {
-		public int x;
-		public int y;
+	
 
-		public Tuple(int x, int y){
-			this.x = x;
-			this.y = y;
-		}
-
-		@Override
-		public boolean equals(Object object){
-			if (object.x == object.x && object.y == y)
-		}
-
-	// Get untouched tile
-	private Tuples untouched(int x, int y){
-		Tuple coor;
+	// Check if surrounding tile with value 1 is uncovered
+	private Tuple checkIfOneUncovered(int x, int y){
+		Tuple coor = new Tuple();
 		int zeroCount = 0;
 		for(int i = -1;i <= 1;i++){
 			for(int j = -1;j <= 1;j++){
@@ -158,9 +187,9 @@ public class MyAI extends AI {
 				}
 			}
 		}
-		if(zeroCount > 1)
-			return null;
-		else if(zeroCount == 1)
+
+		if (zeroCount == 1)
 			return coor;
+		return null;
 	}
 }
