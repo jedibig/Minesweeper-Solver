@@ -38,9 +38,12 @@ public class MyAI extends AI {
 	// if you decide to do so in your implementation.
 	@SuppressWarnings("unchecked")
 
+	private int[][] board;
+
 
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
-		// ################### Implement Constructor (required) ####################	
+		// ################### Implement Constructor (required) ####################
+		board = new int[rowDimension][colDimension];
 	}
 	
 	// ################## Implement getAction(), (required) #####################
@@ -58,8 +61,16 @@ public class MyAI extends AI {
 				if(i == 0 && j == 0)
 					continue;
 				else
-
+					break;
 			}
 		}
+	}
+
+	private int x(int xVal){
+		return xVal-1;
+	}
+
+	private int y(int yVal){
+		return yVal-1;
 	}
 }
