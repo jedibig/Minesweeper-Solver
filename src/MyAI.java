@@ -46,8 +46,8 @@ public class MyAI extends AI {
 	private int colSize;
 	private int currX;
 	private int currY;
-	private LinkedList<int[]> needUncovering;
-	private LinkedList<int[]> safeTile;
+	private LinkedList<Tuple> needUncovering;
+	private LinkedList<Tuple> safeTile;
 
 
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
@@ -57,27 +57,24 @@ public class MyAI extends AI {
 		currY = startY;
 		rowSize = rowDimension;
 		colSize = colDimension;
-		needUncovering = new LinkedList<int[]>();
-		needUncovering = new LinkedList<int[]>();
+		needUncovering = new LinkedList<Tuple>();
+		needUncovering = new LinkedList<Tuple>();
 	}
 	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-		System.out.printf("currX: %d 	currY: %d\n", currX, currY);
-		System.out.println(number);
+		// System.out.printf("currX: %d 	currY: %d\n", currX, currY);
+		// System.out.println(number);
 		board[x(currX)][y(currY)] = number == 0 ? -1 : number;
 
 
 		if (number == 0)
 			uncoverZero(currX,currY);
-		else {
-			safeTile.add()
-		}
 		
 		if(needUncovering.size() > 0){
-			int[] coor = needUncovering.pop();
-			currX = coor[0];
-			currY = coor[1];
+			Tuple coor = needUncovering.pop();
+			currX = coor.x;
+			currY = coor.y;
 			return new Action(Action.ACTION.UNCOVER, currX, currY);
 		} 
 		else return null;
@@ -92,30 +89,28 @@ public class MyAI extends AI {
 	public void uncoverZero(int x, int y){
 		for(int i = -1;i <= 1;i++){
 			for(int j = -1;j <= 1;j++){
-				int coor[] = {x+i, y+j};
+				Tuple coor = Tuple(x+i, y+j);
 
-				// System.out.printf("i: %d	j: %d\n", i, j);
 				if(isInList(coor))
 					continue;
 				if(i == 0 && j == 0)
 					continue;
-				if(x+i < 1 || y+j < 1)
+				if(coor.x < 1 || coor.y < 1)
 					continue;
-				if(x+i > rowSize || y+j > colSize)
+				if(coor.x > rowSize || coor.y > colSize)
 					continue;
-				if(board[x(x+i)][y(y+j)] != 0)
+				if(board[x(coor.x)][y(coor.y)] != 0)
 					continue;
 				
-				 
 				needUncovering.add(coor);
 			}
 		}
 	}
 
 	// Check if value in list
-	private boolean isInList(int[] pair){
-		for (int[] e: needUncovering){
-			if (e[0] == pair[0] && e[1] == pair[1])
+	private boolean isInList(Tuple pair){
+		for (Tuple e: needUncovering){
+			if (e == pair)
 				return true;
 		} 
 		return false;
@@ -130,5 +125,21 @@ public class MyAI extends AI {
 	// Get the y value in local array board
 	private int y(int yVal){
 		return yVal-1;
+	}
+
+	private class Tuple {
+		public int x;
+		public int y;
+
+		public Tuple(int x, int y){
+			this.x = x;
+			this.y = y;
+		}
+
+		@Override
+		public boolean equals(Object object){
+			if (object.x == object.x && object.y == y)
+		}
+
 	}
 }
