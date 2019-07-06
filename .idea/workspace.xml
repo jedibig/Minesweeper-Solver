@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="590728d3-ba3c-48ee-be8a-1daf2d937e4a" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/.idea/Proj.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MyAI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyAI.java" afterDir="false" />
+=======
+    <list default="true" id="42ba48c2-3ead-4326-8d4c-d02531872946" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/Minesweeper-Solver---CS-171.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+>>>>>>> fe626a2ad1bcdf4ae96c3dd35197a73cb23db2ce
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,6 +27,7 @@
     <option name="delegatedBuild" value="true" />
   </component>
   <component name="FileEditorManager">
+<<<<<<< HEAD
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Action.java">
@@ -45,10 +54,17 @@
               <caret line="92" column="17" lean-forward="true" selection-start-line="92" selection-start-column="17" selection-end-line="92" selection-end-column="17" />
             </state>
           </provider>
+=======
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/AI.java">
+          <provider selected="true" editor-type-id="text-editor" />
+>>>>>>> fe626a2ad1bcdf4ae96c3dd35197a73cb23db2ce
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/MyAI.java">
+<<<<<<< HEAD
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="389">
               <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
@@ -63,6 +79,9 @@
               <caret column="12" lean-forward="true" selection-start-column="12" selection-end-column="12" />
             </state>
           </provider>
+=======
+          <provider selected="true" editor-type-id="text-editor" />
+>>>>>>> fe626a2ad1bcdf4ae96c3dd35197a73cb23db2ce
         </entry>
       </file>
     </leaf>
@@ -70,6 +89,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+<<<<<<< HEAD
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -81,6 +101,13 @@
     <option name="x" value="1116" />
     <option name="width" value="1149" />
     <option name="height" value="1455" />
+=======
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="19" />
+    <option name="y" value="72" />
+    <option name="width" value="1920" />
+    <option name="height" value="1057" />
+>>>>>>> fe626a2ad1bcdf4ae96c3dd35197a73cb23db2ce
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -92,12 +119,21 @@
         <subPane>
           <expand>
             <path>
+<<<<<<< HEAD
               <item name="Proj" type="b2602c69:ProjectViewProjectNode" />
               <item name="Proj" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Proj" type="b2602c69:ProjectViewProjectNode" />
               <item name="Proj" type="462c0819:PsiDirectoryNode" />
+=======
+              <item name="Minesweeper-Solver---CS-171" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Minesweeper-Solver---CS-171" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Minesweeper-Solver---CS-171" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Minesweeper-Solver---CS-171" type="462c0819:PsiDirectoryNode" />
+>>>>>>> fe626a2ad1bcdf4ae96c3dd35197a73cb23db2ce
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -113,6 +149,11 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
+=======
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+>>>>>>> fe626a2ad1bcdf4ae96c3dd35197a73cb23db2ce
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -131,6 +172,7 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
+<<<<<<< HEAD
       <changelist id="590728d3-ba3c-48ee-be8a-1daf2d937e4a" name="Default Changelist" comment="" />
       <created>1562117736945</created>
       <option name="number" value="Default" />
@@ -138,10 +180,19 @@
       <updated>1562117736945</updated>
       <workItem from="1562117753136" duration="235000" />
       <workItem from="1562443439628" duration="1873000" />
+=======
+      <changelist id="42ba48c2-3ead-4326-8d4c-d02531872946" name="Default Changelist" comment="" />
+      <created>1562110542192</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1562110542192</updated>
+      <workItem from="1562110546115" duration="231000" />
+>>>>>>> fe626a2ad1bcdf4ae96c3dd35197a73cb23db2ce
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
+<<<<<<< HEAD
     <option name="totallyTimeSpent" value="2108000" />
   </component>
   <component name="ToolWindowManager">
@@ -154,6 +205,26 @@
       <window_info id="UI Designer" order="4" />
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
+=======
+    <option name="totallyTimeSpent" value="231000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-40" y="435" width="1920" height="1057" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Image Layers" />
+      <window_info id="Designer" />
+      <window_info id="UI Designer" />
+      <window_info id="Capture Tool" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24973376" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Database Changes" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+>>>>>>> fe626a2ad1bcdf4ae96c3dd35197a73cb23db2ce
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -161,6 +232,7 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
+<<<<<<< HEAD
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
@@ -175,12 +247,25 @@
       <window_info anchor="right" id="Capture Analysis" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Database" order="8" />
+=======
+      <window_info anchor="right" id="Palette" />
+      <window_info anchor="right" id="Theme Preview" />
+      <window_info anchor="right" id="Maven" />
+      <window_info anchor="right" id="make" />
+      <window_info anchor="right" id="Capture Analysis" />
+      <window_info anchor="right" id="Palette&#9;" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+>>>>>>> fe626a2ad1bcdf4ae96c3dd35197a73cb23db2ce
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/src/Action.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
@@ -215,6 +300,13 @@
           <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
         </state>
       </provider>
+=======
+    <entry file="file://$PROJECT_DIR$/src/AI.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/MyAI.java">
+      <provider selected="true" editor-type-id="text-editor" />
+>>>>>>> fe626a2ad1bcdf4ae96c3dd35197a73cb23db2ce
     </entry>
   </component>
 </project>

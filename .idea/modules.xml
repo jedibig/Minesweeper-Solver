@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/Proj.iml" filepath="$PROJECT_DIR$/.idea/Proj.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/Minesweeper-Solver---CS-171.iml" filepath="$PROJECT_DIR$/.idea/Minesweeper-Solver---CS-171.iml" />
+>>>>>>> fe626a2ad1bcdf4ae96c3dd35197a73cb23db2ce
     </modules>
   </component>
 </project>
