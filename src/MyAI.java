@@ -63,42 +63,58 @@ public class MyAI extends AI {
 	
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
-		// System.out.printf("currX: %d 	currY: %d\n", currX, currY);
-		// System.out.println(number);
-		board[x(currX)][y(currY)] = number == 0 ? -1 : number;
-
-
-		if (number == 0)
-			uncoverZero(currX,currY);
-		else {
-			safeTile.add(new Tuple(currX,currY));
-		}
+		boolean valid = false;
+		String actionStr = "";
 		
 
-		if(needUncovering.size() > 0){
-			Tuple coor = needUncovering.pop();
-			currX = coor.x;
-			currY = coor.y;
-			return new Action(Action.ACTION.UNCOVER, currX, currY);
-		} 
-		else if (safeTile.size() > 0){
-			Tuple uncover;
-			while (safeTile.size() > 0){
-				// Possible circular loop
-				Tuple currCoor = safeTile.pop();
+		while (!valid){
+			board[x(currX)][y(currY)] = number == 0 ? -1 : number;
 
-				if (board[x(currCoor.x)][y(currCoor.y)] == 1){
-					uncover = checkIfOneUncovered(currCoor.x, currCoor.y);
-					if (uncover == null)
-						safeTile.add(currCoor);
-					else
-						return new Action(Action.ACTION.FLAG, uncover.x, uncover.y);
+
+			if (number == 0)
+				uncoverZero(currX,currY);
+			else {
+				safeTile.add(new Tuple(currX,currY));
+			}
+			
+
+			if(needUncovering.size() > 0){
+				Tuple coor = needUncovering.pop();
+				currX = coor.x;
+				currY = coor.y;
+				actionStr = "U";
+				valid = true;
+				continue;
+			} 
+			else if (safeTile.size() > 0){
+				Tuple uncover;
+				while (safeTile.size() > 0){
+					// Possible circular loop
+					Tuple currCoor = safeTile.pop();
+
+					if (board[x(currCoor.x)][y(currCoor.y)] == 1){
+						uncover = checkIfOneUncovered(currCoor.x, currCoor.y);
+						if (uncover == null)
+							safeTile.add(currCoor);
+						else if (uncover.x > -1 && uncover.y > -1)
+							currX = uncover.x;
+							currY = uncover.y;
+							actionStr = "F";
+							valid = true;
+					}
 				}
-			}		
+			}
 		}
 
-		return null;
-		
+		if (actionStr.equals("U")) {
+			return new Action(Action.ACTION.UNCOVER, currX, currY);
+		}
+		else if (actionStr.equals("F")) {
+			return new Action(Action.ACTION.FLAG, currX, currY);
+		} 
+		else {
+			return new Action(Action.ACTION.UNFLAG, currX, currY);
+		}
 	}
 
 	// ################### Helper Functions Go Here (optional) ##################
@@ -140,7 +156,7 @@ public class MyAI extends AI {
 					continue;
 				if(i == 0 && j == 0)
 					continue;
-				if(inBoundaries(coor.x, coor.y))
+				if(outBoundaries(coor.x, coor.y))
 					continue;
 				if(board[x(coor.x)][y(coor.y)] != 0)
 					continue;
@@ -150,14 +166,14 @@ public class MyAI extends AI {
 		}
 	}
 
-	private boolean inBoundaries(int x, int y){
+	private boolean outBoundaries(int x, int y){
 		return x < 1 || y < 1 || x > rowSize || y > colSize;
 	}
 
 	// Check if value in list
 	private boolean isInList(Tuple pair){
 		for (Tuple e: needUncovering){
-			if (e == pair)
+			if (e.x == pair.x && e.y == pair.y)
 				return true;
 		} 
 		return false;
@@ -182,6 +198,9 @@ public class MyAI extends AI {
 		int zeroCount = 0;
 		for(int i = -1;i <= 1;i++){
 			for(int j = -1;j <= 1;j++){
+				if(outBoundaries(x+i, y+j)){
+					continue;
+				}
 				if(board[x(x+i)][y(y+j)] == 0){
 					coor.x = x+i;
 					coor.y = y+j;
@@ -190,7 +209,7 @@ public class MyAI extends AI {
 			}
 		}
 
-		if (zeroCount == 1)
+		if (zeroCount <= 1)
 			return coor;
 		return null;
 	}
