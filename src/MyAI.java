@@ -47,6 +47,7 @@ public class MyAI extends AI {
 	private int currX;
 	private int currY;
 	private LinkedList<Tuple> needUncovering;
+	private LinkedList<Tuple> needFlagging;
 	private LinkedList<Tuple> safeTile;
 
 
@@ -58,7 +59,9 @@ public class MyAI extends AI {
 		rowSize = rowDimension;
 		colSize = colDimension;
 		needUncovering = new LinkedList<Tuple>();
+		needFlagging = new LinkedList<Tuple>();
 		safeTile = new LinkedList<Tuple>();
+
 	}
 	
 	// ################## Implement getAction(), (required) #####################
@@ -68,7 +71,7 @@ public class MyAI extends AI {
 		
 
 		while (!valid){
-			board[x(currX)][y(currY)] = number == 0 ? -1 : number;
+			board[x(currX)][y(currY)] = number > 0 ? number : (number == 0 ? -1 : -2);
 
 
 			if (number == 0)
@@ -85,31 +88,40 @@ public class MyAI extends AI {
 				actionStr = "U";
 				valid = true;
 				continue;
-			} 
+			} if (needFlagging.size() > 0){
+				Tuple coor = needFlagging.pop();
+				currX = coor.x;
+				currY = coor.y;
+				actionStr = "F";
+				valid = true;
+				continue;
+			}
 			else if (safeTile.size() > 0){
 				Tuple uncover;
-				while (safeTile.size() > 0){
-					// Possible circular loop
-					Tuple currCoor = safeTile.pop();
-
-					if (board[x(currCoor.x)][y(currCoor.y)] == 1){
-						uncover = checkIfOneUncovered(currCoor.x, currCoor.y);
-						if (uncover == null)
-							safeTile.add(currCoor);
-						else if (uncover.x > -1 && uncover.y > -1)
-							currX = uncover.x;
-							currY = uncover.y;
-							actionStr = "F";
-							valid = true;
-					}
+				// Possible circular loop
+				Tuple currCoor = safeTile.pop();
+				int value = board[x(currCoor.x)][y(currCoor.y)];
+				if ( value > 0){
+					countFlagAndCoveredTiles(new Tuple(currCoor.x, currCoor.y), value);
+					// if (uncover == null)
+					// 	safeTile.add(currCoor);
+					// else if (uncover.x > -1 && uncover.y > -1)
+						
+					// 	System.out.printf("currX: %d	curry: %d\n", uncover.x, uncover.y);
+					// 	currX = uncover.x;
+					// 	currY = uncover.y;
+					// 	actionStr = "F";
+					// 	valid = true;
+					// 	continue;
 				}
+				
 			}
 		}
 
 		if (actionStr.equals("U")) {
 			return new Action(Action.ACTION.UNCOVER, currX, currY);
 		}
-		else if (actionStr.equals("F")) {
+		else if (actionStr.equals("K")) {
 			return new Action(Action.ACTION.FLAG, currX, currY);
 		} 
 		else {
@@ -193,24 +205,31 @@ public class MyAI extends AI {
 	
 
 	// Check if surrounding tile with value 1 is uncovered
-	private Tuple checkIfOneUncovered(int x, int y){
-		Tuple coor = new Tuple();
-		int zeroCount = 0;
+	private void countFlagAndCoveredTiles(Tuple pair, int value){
+		LinkedList<Tuple> coveredTiles = new LinkedList<>();
+		LinkedList<Tuple> flaggedTiles = new LinkedList<>();
+	
 		for(int i = -1;i <= 1;i++){
 			for(int j = -1;j <= 1;j++){
-				if(outBoundaries(x+i, y+j)){
+				if(outBoundaries(pair.x+i, pair.y+j)){
 					continue;
 				}
-				if(board[x(x+i)][y(y+j)] == 0){
-					coor.x = x+i;
-					coor.y = y+j;
-					zeroCount++;
-				}
+				if(board[x(pair.x+i)][y(pair.y+j)] == 0){
+					coveredTiles.add(new Tuple(pair.x+i, pair.y+j));
+				} else if (board[x(pair.x+i)][y(pair.y+j)] == -2)
+					flaggedTiles.add(new Tuple(pair.x+i, pair.y+j));
 			}
 		}
 
-		if (zeroCount <= 1)
-			return coor;
-		return null;
+		if (coveredTiles.size() == number){
+			for (Tuple e: coveredTiles)
+				needFlagging.add(e);
+		} else if (flaggedTiles.size() == number){
+			for (Tuple e: coveredTiles)
+				needUncovering.add(e);
+
+		// if (zeroCount <= 1)
+		// 	return coor;
+		// return null;
 	}
 }
