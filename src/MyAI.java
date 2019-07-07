@@ -71,7 +71,18 @@ public class MyAI extends AI {
 		
 
 		while (!valid){
-			board[x(currX)][y(currY)] = number > 0 ? number : (number == 0 ? -1 : -2);
+			switch (number){
+				case -1: 
+					board[x(currX)][y(currY)] = -2;
+					break;
+				case 0:
+					board[x(currX)][y(currY)] = -1;
+					break;
+				default:
+					board[x(currX)][y(currY)] = number;
+					break;
+			}
+			// board[x(currX)][y(currY)] = number > 0 ? number : (number == 0 ? -1 : -2);
 
 
 			if (number == 0)
@@ -121,7 +132,7 @@ public class MyAI extends AI {
 		if (actionStr.equals("U")) {
 			return new Action(Action.ACTION.UNCOVER, currX, currY);
 		}
-		else if (actionStr.equals("K")) {
+		else if (actionStr.equals("F")) {
 			return new Action(Action.ACTION.FLAG, currX, currY);
 		} 
 		else {
@@ -221,13 +232,13 @@ public class MyAI extends AI {
 			}
 		}
 
-		if (coveredTiles.size() == number){
+		if (coveredTiles.size() == value){
 			for (Tuple e: coveredTiles)
 				needFlagging.add(e);
-		} else if (flaggedTiles.size() == number){
+		} else if (flaggedTiles.size() == value){
 			for (Tuple e: coveredTiles)
 				needUncovering.add(e);
-
+		}
 		// if (zeroCount <= 1)
 		// 	return coor;
 		// return null;
