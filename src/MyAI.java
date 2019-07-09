@@ -215,7 +215,7 @@ public class MyAI extends AI {
 		if (flaggedTiles.size() == value){
 			for (Tuple e: coveredTiles)
 				needUncovering.add(e);
-		} else if (coveredTiles.size() == value){
+		} else if (coveredTiles.size() == value - flaggedTiles.size()){
 			for (Tuple e: coveredTiles)
 				needFlagging.add(e);
 		} else if (coveredTiles.size() > 0)
