@@ -17,7 +17,7 @@ NOTES:       - If you are having trouble understanding how the shell
 */
 
 package src;
-import src.Action.ACTION;
+import src.Action;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
