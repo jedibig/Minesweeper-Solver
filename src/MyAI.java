@@ -74,6 +74,8 @@ public class MyAI extends AI {
 		else {
 			safeTile.add(new Tuple(currX,currY));
 		}
+		
+		int countSafeTiles = safeTile.size();
 
 		while (!valid){
 			// if the value of currX and currY is > 0, that number is assigned towards the 2D array, 
@@ -93,13 +95,15 @@ public class MyAI extends AI {
 				currY = coor.y;
 				actionStr = "F";
 				valid = true;
-			} else if (safeTile.size() > 0){
-				Tuple uncover;
+			} else if (countSafeTiles < 0){
 				// Possible circular loop
+				//Finish countSafeTile
+				countSafeTiles--;
+				
 				printList(safeTile, "safeTile");
 				Tuple currCoor = safeTile.pop();
 				int value = board[x(currCoor.x)][y(currCoor.y)];
-				if ( value > 0){
+				if (value > 0){
 					countFlagAndCoveredTiles(new Tuple(currCoor.x, currCoor.y), value);
 				}
 			} else 
