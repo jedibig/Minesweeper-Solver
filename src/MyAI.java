@@ -70,9 +70,9 @@ public class MyAI extends AI {
 		String actionStr = "";
 
 		if (number == 0)
-				uncoverZero(currX,currY);
+			uncoverZero(currX,currY);
 		else {
-				safeTile.add(new Tuple(currX,currY));
+			safeTile.add(new Tuple(currX,currY));
 		}
 
 		while (!valid){
@@ -179,7 +179,6 @@ public class MyAI extends AI {
 		return false;
 	}
 
-
 	// Get the x value in local array board
 	private int x(int xVal){
 		return xVal-1;
@@ -188,9 +187,7 @@ public class MyAI extends AI {
 	// Get the y value in local array board
 	private int y(int yVal){
 		return yVal-1;
-	}
-
-	
+	}	
 
 	// Check if surrounding tile with value 1 is uncovered
 	private void countFlagAndCoveredTiles(Tuple pair, int value){
