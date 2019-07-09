@@ -68,20 +68,18 @@ public class MyAI extends AI {
 	public Action getAction(int number) {
 		boolean valid = false;
 		String actionStr = "";
-		
+
+		if (number == 0)
+				uncoverZero(currX,currY);
+		else {
+				safeTile.add(new Tuple(currX,currY));
+		}
 
 		while (!valid){
 			// if the value of currX and currY is > 0, that number is assigned towards the 2D array, 
 			// otherwise -1 if its 0, -2 if its flagged, 0 if its covered.
 			board[x(currX)][y(currY)] = number > 0 ? number : number - 1;	
 
-			if (number == 0)
-				uncoverZero(currX,currY);
-			else {
-				if (actionStr.equals("U"))
-					safeTile.add(new Tuple(currX,currY));
-			}
-			
 			
 			if(needUncovering.size() > 0){
 				Tuple coor = needUncovering.pop();
