@@ -42,13 +42,13 @@ public class MyAI extends AI {
 	@SuppressWarnings("unchecked")
 
 	private int[][] board;
-	private int rowSize;
-	private int colSize;
-	private int currX;
+	private int rowSize; // Number of row
+	private int colSize; // Number of column
+	private int currX;	// Last coordinate which an action was taken
 	private int currY;
-	private LinkedList<Tuple> needUncovering;
-	private LinkedList<Tuple> needFlagging;
-	private LinkedList<Tuple> safeTile;
+	private LinkedList<Tuple> needUncovering;	// List of coordinates where it is safe to uncover
+	private LinkedList<Tuple> needFlagging;		// List of coordinates where flagging is needed
+	private LinkedList<Tuple> safeTile;			// List of coordinates where it is uncovered and have one or more covered tiles surrounding it
 
 
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
@@ -71,62 +71,41 @@ public class MyAI extends AI {
 		
 
 		while (!valid){
-			switch (number){
-				case -1: 
-					board[x(currX)][y(currY)] = -2;
-					break;
-				case 0:
-					board[x(currX)][y(currY)] = -1;
-					break;
-				default:
-					board[x(currX)][y(currY)] = number;
-					break;
-			}
-			// board[x(currX)][y(currY)] = number > 0 ? number : (number == 0 ? -1 : -2);
-
+			// if the value of currX and currY is > 0, that number is assigned towards the 2D array, 
+			// otherwise -1 if its 0, -2 if its flagged, 0 if its covered.
+			board[x(currX)][y(currY)] = number > 0 ? number : number - 1;	
 
 			if (number == 0)
 				uncoverZero(currX,currY);
 			else {
-				safeTile.add(new Tuple(currX,currY));
+				if (actionStr.equals("U"))
+					safeTile.add(new Tuple(currX,currY));
 			}
 			
-
+			
 			if(needUncovering.size() > 0){
 				Tuple coor = needUncovering.pop();
 				currX = coor.x;
 				currY = coor.y;
 				actionStr = "U";
 				valid = true;
-				continue;
-			} if (needFlagging.size() > 0){
+			} else if (needFlagging.size() > 0){
 				Tuple coor = needFlagging.pop();
 				currX = coor.x;
 				currY = coor.y;
 				actionStr = "F";
 				valid = true;
-				continue;
-			}
-			else if (safeTile.size() > 0){
+			} else if (safeTile.size() > 0){
 				Tuple uncover;
 				// Possible circular loop
+				printList(safeTile, "safeTile");
 				Tuple currCoor = safeTile.pop();
 				int value = board[x(currCoor.x)][y(currCoor.y)];
 				if ( value > 0){
 					countFlagAndCoveredTiles(new Tuple(currCoor.x, currCoor.y), value);
-					// if (uncover == null)
-					// 	safeTile.add(currCoor);
-					// else if (uncover.x > -1 && uncover.y > -1)
-						
-					// 	System.out.printf("currX: %d	curry: %d\n", uncover.x, uncover.y);
-					// 	currX = uncover.x;
-					// 	currY = uncover.y;
-					// 	actionStr = "F";
-					// 	valid = true;
-					// 	continue;
 				}
-				
-			}
+			} else 
+				return new Action(Action.ACTION.LEAVE,1,1);
 		}
 
 		if (actionStr.equals("U")) {
@@ -222,9 +201,12 @@ public class MyAI extends AI {
 	
 		for(int i = -1;i <= 1;i++){
 			for(int j = -1;j <= 1;j++){
-				if(outBoundaries(pair.x+i, pair.y+j)){
+				if(outBoundaries(pair.x+i, pair.y+j))
 					continue;
-				}
+				else if(i == 0 && j == 0)
+					continue;
+				
+	
 				if(board[x(pair.x+i)][y(pair.y+j)] == 0){
 					coveredTiles.add(new Tuple(pair.x+i, pair.y+j));
 				} else if (board[x(pair.x+i)][y(pair.y+j)] == -2)
@@ -232,15 +214,22 @@ public class MyAI extends AI {
 			}
 		}
 
-		if (coveredTiles.size() == value){
-			for (Tuple e: coveredTiles)
-				needFlagging.add(e);
-		} else if (flaggedTiles.size() == value){
+		if (flaggedTiles.size() == value){
 			for (Tuple e: coveredTiles)
 				needUncovering.add(e);
-		}
-		// if (zeroCount <= 1)
-		// 	return coor;
-		// return null;
+		} else if (coveredTiles.size() == value){
+			for (Tuple e: coveredTiles)
+				needFlagging.add(e);
+		} else if (coveredTiles.size() > 0)
+			safeTile.add(pair);
+
+	}
+
+	// For testing purpose only
+	private void printList(LinkedList<Tuple> list, String name){
+		System.err.printf("printing list %s\t", name);
+		for (Tuple e : list)
+			System.err.printf("(%d,%d)", e.x, e.y);
+		System.err.println();
 	}
 }
