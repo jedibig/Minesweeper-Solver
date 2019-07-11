@@ -80,9 +80,9 @@ public class MyAI extends AI {
 		while (!valid){
 			// if the value of currX and currY is > 0, that number is assigned towards the 2D array, 
 			// otherwise -1 if its 0, -2 if its flagged, 0 if its covered.
+
 			board[x(currX)][y(currY)] = number > 0 ? number : number - 1;	
 
-			
 			if(needUncovering.size() > 0){
 				Tuple coor = needUncovering.pop();
 				currX = coor.x;
@@ -95,12 +95,12 @@ public class MyAI extends AI {
 				currY = coor.y;
 				actionStr = "F";
 				valid = true;
-			} else if (countSafeTiles < 0){
+			} else if (countSafeTiles > 0){
 				// Possible circular loop
 				//Finish countSafeTile
 				countSafeTiles--;
 				
-				printList(safeTile, "safeTile");
+				// printList(safeTile, "safeTile");
 				Tuple currCoor = safeTile.pop();
 				int value = board[x(currCoor.x)][y(currCoor.y)];
 				if (value > 0){
