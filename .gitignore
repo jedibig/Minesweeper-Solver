@@ -1,4 +1,6 @@
 .DS_Store
 .idea
+.dist
 bin
 WorldGenerator
+scores
