@@ -162,8 +162,13 @@ public class MyAI extends AI {
 					continue;
 				if(outBoundaries(coor.x, coor.y))
 					continue;
-				if(board[x(coor.x)][y(coor.y)] != 0)
-					continue;
+				try{
+					if(board[x(coor.x)][y(coor.y)] != 0)
+						continue;
+				} catch (ArrayIndexOutOfBoundsException e) {
+					System.err.printf("Array out of bound. Was trying to access (%d,%d) with rowsize: %d and colsize: %d.\n",coor.x,coor.y,rowSize,colSize);
+				}
+				
 				
 				needUncovering.add(coor);
 			}
@@ -171,7 +176,7 @@ public class MyAI extends AI {
 	}
 
 	private boolean outBoundaries(int x, int y){
-		return x < 1 || y < 1 || x > rowSize || y > colSize;
+		return x < 1 || y < 1 || x > colSize || y > rowSize;
 	}
 
 	// Check if value in list
