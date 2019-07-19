@@ -169,7 +169,6 @@ public class MyAI extends AI {
 					System.err.printf("Array out of bound. Was trying to access (%d,%d) with rowsize: %d and colsize: %d.\n",coor.x,coor.y,rowSize,colSize);
 				}
 				
-				
 				needUncovering.add(coor);
 			}
 		}
