@@ -112,11 +112,6 @@ public class MyAI extends AI {
 
 				for (Tuple coor : safeTile)
 					reduceNumber(coor);
-				
-				printBoard();
-				actionStr = "L";
-				valid = true;
-
 			} else{
 				actionStr = "L";
 				valid = true;
@@ -252,6 +247,7 @@ public class MyAI extends AI {
 					continue;
 
 				if(board[x(pair.x+i)][y(pair.y+j)] == -2){
+					board[x(pair.x+i)][y(pair.y+j)] -= 1;
 					reduceSurroundingNumber(new Tuple(pair.x+i,pair.y+j));
 				}
 			}
