@@ -253,20 +253,12 @@ public class MyAI extends AI {
 		}
 	}
 
-	//Comparator x
+	//Comparator x & y
 	class compareX implements Comparator<Tuple>{
 		public int compare(Tuple t1, Tuple t2){
-			return t1.x - t2.x;
+			return (t1.x - t1.y) + (t2.x - t2.y);
 		}
 	}
-
-	//Comparator y
-	class compareY implements Comparator<Tuple>{
-		public int compare(Tuple t1, Tuple t2){
-			return t1.y - t2.y;
-		}
-	}
-
 
 	// For testing purpose only
 	private void printList(LinkedList<Tuple> list, String name){
