@@ -177,7 +177,6 @@ public class MyAI extends AI {
 					System.err.printf("Array out of bound. Was trying to access (%d,%d) with rowsize: %d and colsize: %d.\n",coor.x,coor.y,rowSize,colSize);
 				}
 				
-				
 				needUncovering.add(coor);
 			}
 		}
@@ -254,6 +253,7 @@ public class MyAI extends AI {
 		}
 	}
 
+<<<<<<< HEAD
 	private void reduceSurroundingNumber(Tuple pair){
 		for(int i = -1;i <= 1;i++){
 			for(int j = -1;j <= 1;j++){
@@ -269,6 +269,15 @@ public class MyAI extends AI {
 	}
 
 
+=======
+	//Comparator x & y
+	class compareX implements Comparator<Tuple>{
+		public int compare(Tuple t1, Tuple t2){
+			return (t1.x - t1.y) + (t2.x - t2.y);
+		}
+	}
+
+>>>>>>> e24d33fe7e5d1c3bda421a5aba7110ee5dab32cb
 	// For testing purpose only
 	private void printList(LinkedList<Tuple> list, String name){
 		System.err.printf("printing list %s\t", name);
