@@ -29,17 +29,22 @@ import os
 import argparse
 
 
-def generateWorlds(numWorlds: int, baseFileName: "string", rowDimension: int, colDimension: int, numMines: int) -> None:
+def generateWorlds(numWorlds: int, baseFileName: "string", dir: "string", rowDimension: int, colDimension: int, numMines: int) -> None:
 	""" Generates N random worlds of a specified difficulty """
 	""" Each generated world will be a text file with baseFileName followed by a number """
 	for i in range(1, numWorlds+1):
-		createWorldFile(baseFileName+str(i), rowDimension, colDimension, numMines)
+		createWorldFile(baseFileName+str(i), dir, rowDimension, colDimension, numMines)
 
 
-def createWorldFile(filename: "string", rowDimension: int, colDimension: int, numMines: int) -> None:
+def createWorldFile(filename: "string", dir: "string", rowDimension: int, colDimension: int, numMines: int) -> None:
 	""" Create a single Minesweeper world file """
+<<<<<<< HEAD
 	#print("Creating world " + filename + "...")
 	dir_name = os.path.abspath("Problems")
+=======
+	# print("Creating world " + filename + "...")
+	dir_name = os.path.abspath(dir) # "Problems_s")
+>>>>>>> 424b2bf96f191d6e05c99b02bb529f5c2b4c42e1
 	
 	difficulty_name = filename.split("_", 1)[0]
 	if os.path.isdir(os.path.join(dir_name, difficulty_name)):
@@ -48,7 +53,11 @@ def createWorldFile(filename: "string", rowDimension: int, colDimension: int, nu
 	    directory_name = dir_name
 	
 	file_path = os.path.join(directory_name, filename+".txt")
+<<<<<<< HEAD
 	#print(file_path)
+=======
+	# print(file_path)
+>>>>>>> 424b2bf96f191d6e05c99b02bb529f5c2b4c42e1
 
 	nRows = rowDimension
 	nCols = colDimension
@@ -111,6 +120,7 @@ def main():
 	# Parse options																													# Help is default
 	parser.add_argument("numFiles", help="Number of world files to create", action="store", type=int)								# Number of files
 	parser.add_argument("filename", help="Base filename", action="store")															# Base filename
+	parser.add_argument("directory", help="Directory name", action="store")															# Directory
 	parser.add_argument("rowDimension", help="Number of rows", action="store", type=int)
 	parser.add_argument("colDimension", help="Number of columns", action="store", type=int)
 	parser.add_argument("numMines", help="Number of mines", action="store", type=int)
@@ -119,12 +129,13 @@ def main():
 
 	numFiles = args.numFiles
 	filename = args.filename
+	directory = args.directory
 	rowDimension = args.rowDimension
 	colDimension = args.colDimension
 	numMines = args.numMines
 	
 	if (rowDimension >= 4 and colDimension >= 4 and (numMines <= rowDimension*colDimension - 9) and numMines >= 1):
-		generateWorlds(numFiles, filename, rowDimension, colDimension, numMines)
+		generateWorlds(numFiles, filename, directory, rowDimension, colDimension, numMines)
 	else:
 		print("ERROR: Could not generate worlds! \n\trowDimension >= 4, colDimension >= 4, 1 <= numMines <= (rowDimension*colDimension - 9)")
 

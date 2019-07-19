@@ -103,10 +103,17 @@ public class MyAI extends AI {
 				// printList(safeTile, "safeTile");
 				Tuple currCoor = safeTile.pop();
 				int value = board[x(currCoor.x)][y(currCoor.y)];
-				if (value > 0){
+
+				if (value > 0)
 					countFlagAndCoveredTiles(new Tuple(currCoor.x, currCoor.y), value);
-				}
-			} else 
+				
+			} else if (safeTile.size() > 0){
+				// 1-2 Pattern check
+
+				for (Tuple coor : safeTile)
+					reduceNumber(coor);
+	
+			} else
 				return new Action(Action.ACTION.LEAVE,1,1);
 		}
 
@@ -227,6 +234,39 @@ public class MyAI extends AI {
 			safeTile.add(pair);
 
 	}
+
+	private void reduceNumber(Tuple pair){
+		for(int i = -1;i <= 1;i++){
+			for(int j = -1;j <= 1;j++){
+				if(outBoundaries(pair.x+i, pair.y+j))
+					continue;
+				else if(i == 0 && j == 0)
+					continue;
+				
+				if(board[x(pair.x+i)][y(pair.y+j)] == -2){
+					board[x(pair.x+i)][y(pair.y+j)] -= 1;
+					board[x(pair.x)][y(pair.y)] -= 1;
+				} else if ( board[x(pair.x+i)][y(pair.y+j)] == -3 ) {
+					board[x(pair.x)][y(pair.y)] -= 1;
+				}
+			}
+		}
+	}
+
+	//Comparator x
+	class compareX implements Comparator<Tuple>{
+		public int compare(Tuple t1, Tuple t2){
+			return t1.x - t2.x;
+		}
+	}
+
+	//Comparator y
+	class compareY implements Comparator<Tuple>{
+		public int compare(Tuple t1, Tuple t2){
+			return t1.y - t2.y;
+		}
+	}
+
 
 	// For testing purpose only
 	private void printList(LinkedList<Tuple> list, String name){
