@@ -39,7 +39,7 @@ public class MyAI extends AI {
 	
 	// This line is to remove compiler warnings related to using Java generics
 	// if you decide to do so in your implementation.
-	@SuppressWarnings("unchecked")
+	// @SuppressWarnings("unchecked")
 
 	private int[][] board;
 	private int rowSize; // Number of row
@@ -112,9 +112,15 @@ public class MyAI extends AI {
 
 				for (Tuple coor : safeTile)
 					reduceNumber(coor);
-	
-			} else
-				return new Action(Action.ACTION.LEAVE,1,1);
+				
+				printBoard();
+				actionStr = "L";
+				valid = true;
+
+			} else{
+				actionStr = "L";
+				valid = true;
+			}
 		}
 
 		if (actionStr.equals("U")) {
@@ -124,7 +130,7 @@ public class MyAI extends AI {
 			return new Action(Action.ACTION.FLAG, currX, currY);
 		} 
 		else {
-			return new Action(Action.ACTION.UNFLAG, currX, currY);
+			return new Action(Action.ACTION.LEAVE,1,1);
 		}
 	}
 
@@ -239,20 +245,33 @@ public class MyAI extends AI {
 	private void reduceNumber(Tuple pair){
 		for(int i = -1;i <= 1;i++){
 			for(int j = -1;j <= 1;j++){
+
 				if(outBoundaries(pair.x+i, pair.y+j))
 					continue;
 				else if(i == 0 && j == 0)
 					continue;
-				
+
 				if(board[x(pair.x+i)][y(pair.y+j)] == -2){
-					board[x(pair.x+i)][y(pair.y+j)] -= 1;
-					board[x(pair.x)][y(pair.y)] -= 1;
-				} else if ( board[x(pair.x+i)][y(pair.y+j)] == -3 ) {
-					board[x(pair.x)][y(pair.y)] -= 1;
+					reduceSurroundingNumber(new Tuple(pair.x+i,pair.y+j));
 				}
 			}
 		}
 	}
+
+	private void reduceSurroundingNumber(Tuple pair){
+		for(int i = -1;i <= 1;i++){
+			for(int j = -1;j <= 1;j++){
+				if(outBoundaries(pair.x+i, pair.y+j))
+					continue;
+				else if(i == 0 && j == 0)
+					continue;
+
+				if(board[x(pair.x+i)][y(pair.y+j)] > 0)
+					board[x(pair.x+i)][y(pair.y+j)] -= 1;
+			}
+		}
+	}
+
 
 	// For testing purpose only
 	private void printList(LinkedList<Tuple> list, String name){
@@ -260,5 +279,16 @@ public class MyAI extends AI {
 		for (Tuple e : list)
 			System.err.printf("(%d,%d)", e.x, e.y);
 		System.err.println();
+	}
+
+	private void printBoard(){
+		for(int i = 1;i <= colSize;i++){
+			System.out.printf("%2d\t\t", i);
+			for(int j = 1;j <= rowSize;j++){
+				System.out.printf("%2d\t", board[x(i)][y(j)]);
+			}
+			System.out.println();
+		} 
+		System.out.println();
 	}
 }
