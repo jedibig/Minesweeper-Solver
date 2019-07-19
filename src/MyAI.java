@@ -106,7 +106,9 @@ public class MyAI extends AI {
 				if (value > 0){
 					countFlagAndCoveredTiles(new Tuple(currCoor.x, currCoor.y), value);
 				}
-			} else 
+			} else if (safeTile.size() > 0){
+				
+			} else
 				return new Action(Action.ACTION.LEAVE,1,1);
 		}
 
