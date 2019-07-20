@@ -38,13 +38,8 @@ def generateWorlds(numWorlds: int, baseFileName: "string", dir: "string", rowDim
 
 def createWorldFile(filename: "string", dir: "string", rowDimension: int, colDimension: int, numMines: int) -> None:
 	""" Create a single Minesweeper world file """
-<<<<<<< HEAD
-	#print("Creating world " + filename + "...")
-	dir_name = os.path.abspath("Problems")
-=======
 	# print("Creating world " + filename + "...")
 	dir_name = os.path.abspath(dir) # "Problems_s")
->>>>>>> 424b2bf96f191d6e05c99b02bb529f5c2b4c42e1
 	
 	difficulty_name = filename.split("_", 1)[0]
 	if os.path.isdir(os.path.join(dir_name, difficulty_name)):
@@ -53,11 +48,7 @@ def createWorldFile(filename: "string", dir: "string", rowDimension: int, colDim
 	    directory_name = dir_name
 	
 	file_path = os.path.join(directory_name, filename+".txt")
-<<<<<<< HEAD
-	#print(file_path)
-=======
 	# print(file_path)
->>>>>>> 424b2bf96f191d6e05c99b02bb529f5c2b4c42e1
 
 	nRows = rowDimension
 	nCols = colDimension
