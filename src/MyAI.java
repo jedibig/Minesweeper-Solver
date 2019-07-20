@@ -296,7 +296,7 @@ public class MyAI extends AI {
 						//Found pattern 121
 						//Check if it's on top/bottom
 						if(horizontal){
-							if(board[x(pair1.x), y(pair1.y)+1)] == 0 && board[x(pair2.x), y(pair2.y)+1)] != 0 && board[x(pair3.x), y(pair3.y)+1)] == 0)
+							if(board[x(pair1.x)][y((pair1.y)+1)] == 0 && board[x(pair2.x)][y((pair2.y)+1)] == 0 && board[x(pair3.x)][y((pair3.y)+1)] == 0)
 								//Flag on top
 								needFlagging.add(new Tuple(pair1.x, (pair1.y)+1));
 								needFlagging.add(new Tuple(pair3.x, (pair3.y)+1));
@@ -308,7 +308,7 @@ public class MyAI extends AI {
 								needUncovering.add(new Tuple(pair2.x (pair2.y)-1));
 						}
 						else if(vertical){
-							if(board[x(pair1.x), y(pair1.y)+1)] == 0 && board[x(pair2.x), y(pair2.y)+1)] != 0 && board[x(pair3.x), y(pair3.y)+1)] == 0)
+							if(board[x((pair1.x)+1)][y(pair1.y)] == 0 && board[x((pair2.x)+1)][y(pair2.y)] == 0 && board[x((pair3.x)+1)][y(pair3.y)] == 0)
 								//Flag on right
 								needFlagging.add(new Tuple((pair1.x)+1, pair1.y);
 								needFlagging.add(new Tuple((pair3.x)+1, pair3.y);
@@ -324,17 +324,40 @@ public class MyAI extends AI {
 						Tuple pair4 = safeTile.get(i+3);
 						if(board[x(pair4.x)][y(pair4.y)] == 1 && (pair3.x == pair4.x || pair3.y == pair4.y)){
 							//Found pattern 1221
-
+							if(horizontal){
+								if(board[x(pair1.x)][y((pair1.y)+1)] == 0 && board[x(pair2.x)][y((pair2.y)+1)] == 0 && board[x(pair3.x)][y((pair3.y)+1)] == 0 && board[x(pair4.x)][y((pair4.y)+1)] == 0)
+									//Flag on top
+									needFlagging.add(new Tuple(pair1.x, (pair2.y)+1));
+									needFlagging.add(new Tuple(pair3.x, (pair3.y)+1));
+									needUncovering.add(new Tuple(pair2.x (pair1.y)+1));
+									needUncovering.add(new Tuple(pair2.x (pair4.y)+1));
+								else
+									//Flag below
+									needFlagging.add(new Tuple(pair1.x, (pair2.y)-1));
+									needFlagging.add(new Tuple(pair3.x, (pair3.y)-1));
+									needUncovering.add(new Tuple(pair2.x (pair1.y)-1));
+									needUncovering.add(new Tuple(pair2.x (pair4.y)+1));
+							}
+							else if(vertical){
+								if(board[x((pair1.x)+1)][y(pair1.y)] == 0 && board[x((pair2.x)+1)][y(pair2.y)] == 0 && board[x((pair3.x)+1)][y(pair3.y)] == 0 && board[x((pair4.x)+1)][y(pair4.y)] == 0)
+									//Flag on right
+									needFlagging.add(new Tuple((pair1.x)+1, pair2.y);
+									needFlagging.add(new Tuple((pair3.x)+1, pair3.y);
+									needUncovering.add(new Tuple((pair2.x)+1, pair1.y);
+									needUncovering.add(new Tuple((pair2.x)+1, pair4.y);
+								else
+									//Flag left
+									needFlagging.add(new Tuple((pair1.x)-1, pair2.y);
+									needFlagging.add(new Tuple((pair3.x)-1, pair3.y);
+									needUncovering.add(new Tuple((pair2.x)-1 pair1.y);
+									needUncovering.add(new Tuple((pair2.x)-1 pair4.y);
+							}
 						}
 					}
 				}
 			} 
 		}
 	}
-
-	//Check if 1/2 then implement
-	//Check top and bottom: check board
-	//Flag the ones that needs to be flagged
 
 	// For testing purpose only
 	private void printList(LinkedList<Tuple> list, String name){
