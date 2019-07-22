@@ -21,6 +21,7 @@ import src.Action.ACTION;
 import java.util.LinkedList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.Collections; 
 import java.util.Comparator; 
 
@@ -51,7 +52,7 @@ public class MyAI extends AI {
 	private LinkedList<Tuple> needUncovering;	// List of coordinates where it is safe to uncover
 	private LinkedList<Tuple> needFlagging;		// List of coordinates where flagging is needed
 	private LinkedList<Tuple> safeTile;			// List of coordinates where it is uncovered and have one or more covered tiles surrounding it
-
+	private TreeMap<Tuple, Integer> reducedList;
 
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
 		// ################### Implement Constructor (required) ####################
@@ -63,7 +64,7 @@ public class MyAI extends AI {
 		needUncovering = new LinkedList<Tuple>();
 		needFlagging = new LinkedList<Tuple>();
 		safeTile = new LinkedList<Tuple>();
-
+		reducedList = new TreeMap<>(new SortByCoor());
 	}
 	
 	// ################## Implement getAction(), (required) #####################
@@ -112,9 +113,26 @@ public class MyAI extends AI {
 			} else if (safeTile.size() > 0){
 				// 1-2 Pattern check
 
-				for (Tuple coor : safeTile)
+				reduceList.clear();
+				for (Tuple coor : safeTile){
+					reduceList.put(coor, board[x(coor.x)][y(coor.y)]);
 					reduceNumber(coor);
-			} else{
+				}
+
+				findPattern();
+
+				
+				// 	printBoard();
+
+				// printList(needUncovering, "needUncovering");
+				// printList(needFlagging, "needFlagging");
+
+				// actionStr = "L";
+				// valid = true;
+			} else {
+				
+				// printBoard();
+
 				actionStr = "L";
 				valid = true;
 			}
@@ -264,7 +282,8 @@ public class MyAI extends AI {
 					continue;
 
 				if(board[x(pair.x+i)][y(pair.y+j)] > 0)
-					board[x(pair.x+i)][y(pair.y+j)] -= 1;
+					reduceList.put(new Tuple(pair.x+i, pair.y+j), board[x(pair.x+i)][y(pair.y+j)]-1);
+
 			}
 		}
 	}
@@ -273,68 +292,193 @@ public class MyAI extends AI {
 	//Comparator x & y
 	class SortByCoor implements Comparator<Tuple>{
 		public int compare(Tuple t1, Tuple t2){
-			return (t1.x - t1.y) + (t2.x - t2.y);
+			return (t1.x + t1.y) - (t2.x + t2.y);
 		}
 	}
 
 	//Find pattern then manipulate the 
 	private void findPattern(){
-		Tuple pair1 = safeTile.get(i);
-		safeTile.sort(new SortByCoor());
-		for(int i = 0;i < safeTile.size();i++){	
-			boolean vertical = false;
-			boolean horizontal = false;
-			if(board[x(pair1.x)][y(pair1.y)] == 1){
-				Tuple pair2 = safeTile.get(i+1);
-				if(board[x(pair2.x)][y(pair2.y)] == 2 && (pair1.x == pair2.x || pair1.y == pair2.y)){
-					Tuple pair3 = safeTile.get(i+2);
-					if(pair1.x == pair2.x)
-						vertical = true;
-					else if(pair1.y == pair2.y)
-						horizontal = true;
-					if(board[x(pair3.x)][y(pair3.y)] == 1 && (pair2.x == pair3.x || pair2.y == pair3.y)){
-						//Found pattern 121
-						//Check if it's on top/bottom
-						if(horizontal){
-							if(board[x(pair1.x), y(pair1.y)+1)] == 0 && board[x(pair2.x), y(pair2.y)+1)] != 0 && board[x(pair3.x), y(pair3.y)+1)] == 0)
-								//Flag on top
-								needFlagging.add(new Tuple(pair1.x, (pair1.y)+1));
-								needFlagging.add(new Tuple(pair3.x, (pair3.y)+1));
-								needUncovering.add(new Tuple(pair2.x (pair2.y)+1));
-							else
-								//Flag below
-								needFlagging.add(new Tuple(pair1.x, (pair1.y)-1));
-								needFlagging.add(new Tuple(pair3.x, (pair3.y)-1));
-								needUncovering.add(new Tuple(pair2.x (pair2.y)-1));
-						}
-						else if(vertical){
-							if(board[x(pair1.x), y(pair1.y)+1)] == 0 && board[x(pair2.x), y(pair2.y)+1)] != 0 && board[x(pair3.x), y(pair3.y)+1)] == 0)
-								//Flag on right
-								needFlagging.add(new Tuple((pair1.x)+1, pair1.y);
-								needFlagging.add(new Tuple((pair3.x)+1, pair3.y);
-								needUncovering.add(new Tuple((pair2.x)+1, pair2.y);
-							else
-								//Flag left
-								needFlagging.add(new Tuple((pair1.x)-1, pair1.y);
-								needFlagging.add(new Tuple((pair3.x)-1, pair3.y);
-								needUncovering.add(new Tuple((pair2.x)-1 pair2.y);
+		boolean vertical = false;
+		boolean horizontal = false;
+		if(reducedList.firstEntry().getValue() == 1){
+			Tuple pair1 = reducedList.pollFirstEntry().getKey();
+			if(reducedList.firstEntry().getValue() == 2){
+				Tuple pair2 = reducedList.pollFirstEntry().getKey();
+				if(pair1.x == pair2.x)
+					vertical = true;
+				else if(pair1.y == pair2.y)
+					horizontal = true;
+				if(reducedList.firstEntry().getValue() == 1){
+					Tuple pair3 = reducedList.pollFirstEntry().getKey();
+					if(horizontal && pair3.y == pair2.y){
+						if(board[x(pair1.x)][y(pair1.y)+1] == 0 && board[x(pair2.x)][y(pair2.y)+1] == 0 && board[x(pair3.x)][y(pair3.y)+1] == 0){
+							//Flag on top
+							needFlagging.add(new Tuple(pair1.x, (pair1.y)+1));
+							needFlagging.add(new Tuple(pair3.x, (pair3.y)+1));
+							needUncovering.add(new Tuple(pair2.x, (pair2.y)+1));
+						} else {
+							//Flag below
+							needFlagging.add(new Tuple(pair1.x, (pair1.y)-1));
+							needFlagging.add(new Tuple(pair3.x, (pair3.y)-1));
+							needUncovering.add(new Tuple(pair2.x, (pair2.y)-1));
+						}	
+					} else if(vertical && pair3.x == pair2.x){
+						if(board[x(pair1.x)+1][y(pair1.y)] == 0 && board[x(pair2.x)+1][y(pair2.y)] == 0 && board[x(pair3.x)+1][y(pair3.y)] == 0){
+							//Flag on right
+							needFlagging.add(new Tuple(pair1.x+1, pair1.y));
+							needFlagging.add(new Tuple(pair3.x+1, pair3.y));
+							needUncovering.add(new Tuple(pair2.x+1, pair2.y));
+						} else{
+							//Flag left
+							needFlagging.add(new Tuple((pair1.x)-1, pair1.y));
+							needFlagging.add(new Tuple((pair3.x)-1, pair3.y));
+							needUncovering.add(new Tuple((pair2.x)-1, pair2.y));
 						}
 					}
-					else if(board[x(pair3.x)][y(pair3.y)] == 2 && (pair2.x == pair3.x || pair2.y == pair3.y)){
-						Tuple pair4 = safeTile.get(i+3);
-						if(board[x(pair4.x)][y(pair4.y)] == 1 && (pair3.x == pair4.x || pair3.y == pair4.y)){
+				} else if(reducedList.firstEntry().getValue() == 2){
+					Tuple pair3 = reducedList.pollFirstEntry().getKey();
+					Tuple pair4 = reducedList.pollFirstEntry().getKey();
+					if (horizontal && pair3.y == pair2.y && pair4.y == pair3.y){
+						if(board[x(pair4.x)][y(pair4.y)] == 1){
 							//Found pattern 1221
-
+							if(board[x(pair1.x)][y(pair1.y)+1] == 0 && board[x(pair2.x)][y(pair2.y)+1] == 0 && board[x(pair3.x)][y(pair3.y)+1] == 0 && board[x(pair4.x)][y(pair4.y)+1] == 0){
+								//Flag on top
+								needFlagging.add(new Tuple(pair2.x, (pair2.y)+1));
+								needFlagging.add(new Tuple(pair3.x, (pair3.y)+1));
+								needUncovering.add(new Tuple(pair1.x, (pair1.y)+1));
+								needUncovering.add(new Tuple(pair4.x, (pair4.y)+1));
+							} else {
+								//Flag below
+								needFlagging.add(new Tuple(pair2.x, (pair2.y)-1));
+								needFlagging.add(new Tuple(pair3.x, (pair3.y)-1));
+								needUncovering.add(new Tuple(pair1.x, (pair1.y)-1));
+								needUncovering.add(new Tuple(pair4.x, (pair4.y)-1));
+							}
+						}
+					} else if (vertical && pair3.x == pair2.x && pair4.x == pair3.x){
+						// System.out.println("hello from for found4");
+						if(board[x(pair4.x)][y(pair4.y)] == 1){
+							if(board[x(pair1.x)+1][y(pair1.y)] == 0 && board[x(pair2.x)+1][y(pair2.y)] == 0 && board[x(pair3.x)+1][y(pair3.y)] == 0 && board[x(pair4.x)+1][y(pair4.y)] == 0){
+								//Flag on right
+								needFlagging.add(new Tuple(pair2.x+1, pair2.y));
+								needFlagging.add(new Tuple(pair3.x+1, pair3.y));
+								needUncovering.add(new Tuple(pair1.x+1, pair1.y));
+								needUncovering.add(new Tuple(pair4.x+1, pair4.y));
+							} else{
+								//Flag left
+								needFlagging.add(new Tuple((pair2.x)-1, pair2.y));
+								needFlagging.add(new Tuple((pair3.x)-1, pair3.y));
+								needUncovering.add(new Tuple((pair1.x)-1, pair1.y));
+								needUncovering.add(new Tuple((pair4.x)-1, pair4.y));
+							}
 						}
 					}
 				}
-			} 
+			}
 		}
-	}
+		
+		
+		
+		// safeTile.sort(new SortByCoor());
+		// for(int i = 0;i < reducedList.size();i++){	
+		// 	// System.out.println("hello from for loop");
+		// 	boolean vertical = false;
+		// 	boolean horizontal = false;
+		// 	try {
+		// 		Tuple pair1 = safeTile.get(i);
+		// 		Tuple pair2 = safeTile.get(i+1);
+		// 		Tuple pair3 = safeTile.get(i+2);
+		// 		Tuple pair4 = safeTile.get(i+3);
 
-	//Check if 1/2 then implement
-	//Check top and bottom: check board
-	//Flag the ones that needs to be flagged
+		// 		if(board[x(pair1.x)][y(pair1.y)] == 1){
+		// 			// System.out.println("hello from for found1");
+		// 			if(board[x(pair2.x)][y(pair2.y)] == 2){
+		// 				// System.out.println("hello from for found2");
+
+		// 				if(pair1.x == pair2.x)
+		// 					vertical = true;
+		// 				else if(pair1.y == pair2.y)
+		// 					horizontal = true;
+		// 				else continue;
+		// 				if(board[x(pair3.x)][y(pair3.y)] == 1){
+		// 					// System.out.printf("hello from for found3, coord: (%d,%d)\n", pair1.x, pair1.y);
+
+		// 					//Found pattern 121
+		// 					//Check if it's on top/bottom
+		// 					// System.out.printf("horizontal if "+ horizontal + " %d %d\n" , pair3.y, pair2.y);
+		// 					if(horizontal && pair3.y == pair2.y){
+		// 						if(board[x(pair1.x)][y(pair1.y)+1] == 0 && board[x(pair2.x)][y(pair2.y)+1] == 0 && board[x(pair3.x)][y(pair3.y)+1] == 0){
+		// 							//Flag on top
+		// 							needFlagging.add(new Tuple(pair1.x, (pair1.y)+1));
+		// 							needFlagging.add(new Tuple(pair3.x, (pair3.y)+1));
+		// 							needUncovering.add(new Tuple(pair2.x, (pair2.y)+1));
+		// 						} else {
+		// 							//Flag below
+		// 							needFlagging.add(new Tuple(pair1.x, (pair1.y)-1));
+		// 							needFlagging.add(new Tuple(pair3.x, (pair3.y)-1));
+		// 							needUncovering.add(new Tuple(pair2.x, (pair2.y)-1));
+		// 						}			
+		// 					} else if(vertical && pair3.x == pair2.x){
+		// 						if(board[x(pair1.x)+1][y(pair1.y)] == 0 && board[x(pair2.x)+1][y(pair2.y)] == 0 && board[x(pair3.x)+1][y(pair3.y)] == 0){
+		// 							//Flag on right
+		// 							needFlagging.add(new Tuple(pair1.x+1, pair1.y));
+		// 							needFlagging.add(new Tuple(pair3.x+1, pair3.y));
+		// 							needUncovering.add(new Tuple(pair2.x+1, pair2.y));
+		// 						} else{
+		// 							//Flag left
+		// 							needFlagging.add(new Tuple((pair1.x)-1, pair1.y));
+		// 							needFlagging.add(new Tuple((pair3.x)-1, pair3.y));
+		// 							needUncovering.add(new Tuple((pair2.x)-1, pair2.y));
+		// 						}
+		// 					}
+		// 				} else if (board[x(pair3.x)][y(pair3.y)] == 2){
+		// 					// System.out.println("hello from for found3");
+
+		// 					if (horizontal && pair3.y == pair2.y && pair4.y == pair3.y){
+		// 						// System.out.println("hello from for found4");
+
+		// 						if(board[x(pair4.x)][y(pair4.y)] == 1){
+		// 							//Found pattern 1221
+		// 							if(board[x(pair1.x)][y(pair1.y)+1] == 0 && board[x(pair2.x)][y(pair2.y)+1] == 0 && board[x(pair3.x)][y(pair3.y)+1] == 0 && board[x(pair4.x)][y(pair4.y)+1] == 0){
+		// 								//Flag on top
+		// 								needFlagging.add(new Tuple(pair2.x, (pair2.y)+1));
+		// 								needFlagging.add(new Tuple(pair3.x, (pair3.y)+1));
+		// 								needUncovering.add(new Tuple(pair1.x, (pair1.y)+1));
+		// 								needUncovering.add(new Tuple(pair4.x, (pair4.y)+1));
+		// 							} else {
+		// 								//Flag below
+		// 								needFlagging.add(new Tuple(pair2.x, (pair2.y)-1));
+		// 								needFlagging.add(new Tuple(pair3.x, (pair3.y)-1));
+		// 								needUncovering.add(new Tuple(pair1.x, (pair1.y)-1));
+		// 								needUncovering.add(new Tuple(pair4.x, (pair4.y)-1));
+		// 							}
+		// 						}
+		// 					} else if (vertical && pair3.x == pair2.x && pair4.x == pair3.x){
+		// 						// System.out.println("hello from for found4");
+		// 						if(board[x(pair4.x)][y(pair4.y)] == 1){
+		// 							if(board[x(pair1.x)+1][y(pair1.y)] == 0 && board[x(pair2.x)+1][y(pair2.y)] == 0 && board[x(pair3.x)+1][y(pair3.y)] == 0 && board[x(pair4.x)+1][y(pair4.y)] == 0){
+		// 								//Flag on right
+		// 								needFlagging.add(new Tuple(pair2.x+1, pair2.y));
+		// 								needFlagging.add(new Tuple(pair3.x+1, pair3.y));
+		// 								needUncovering.add(new Tuple(pair1.x+1, pair1.y));
+		// 								needUncovering.add(new Tuple(pair4.x+1, pair4.y));
+		// 							} else{
+		// 								//Flag left
+		// 								needFlagging.add(new Tuple((pair2.x)-1, pair2.y));
+		// 								needFlagging.add(new Tuple((pair3.x)-1, pair3.y));
+		// 								needUncovering.add(new Tuple((pair1.x)-1, pair1.y));
+		// 								needUncovering.add(new Tuple((pair4.x)-1, pair4.y));
+		// 							}
+		// 						}
+		// 					}
+		// 				}
+		// 			}
+		// 		} 
+		// 	} catch (IndexOutOfBoundsException e){
+		// 		continue;
+		// 	}
+		// }
+	}
 
 	// For testing purpose only
 	private void printList(LinkedList<Tuple> list, String name){
