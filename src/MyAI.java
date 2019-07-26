@@ -312,13 +312,13 @@ public class MyAI extends AI {
 				if(reducedListHorizontal.firstEntry().getValue() == 2 && (reducedListHorizontal.firstKey().y == pair1.y)){
 					//Check if second element is 2 (pattern 1-2)
 					Tuple pair2 = reducedListHorizontal.firstKey();
-					if(checkSurrounding12(pair1, pair2)){
+					if(checkSurrounding12H(pair1, pair2)){
 						needFlagging.add(new Tuple(pair2.x+1, pair2.y+1));
 					}
 				} else if(reducedListHorizontal.firstEntry().getValue() == 1 && (reducedListHorizontal.firstKey().y == pair1.y)){
 					//Check if second element is 1 (pattern 1-1)
 					Tuple pair2 = reducedListHorizontal.firstKey();
-					Tuple flagPair = checkSurrounding11(pair1, pair2);
+					Tuple flagPair = checkSurrounding11H(pair1, pair2);
 					if(flagPair != null){
 						needUncovering.add(flagPair);
 					}
@@ -330,7 +330,7 @@ public class MyAI extends AI {
 				if(reducedListHorizontal.firstEntry().getValue() == 1 && (reducedListHorizontal.firstKey().y == pair1.y)){
 					//Check if second element is 1 (pattern 2-1)
 					Tuple pair2 = reducedListHorizontal.firstKey();
-					if(checkSurrounding12(pair1, pair2)){
+					if(checkSurrounding12H(pair1, pair2)){
 						needFlagging.add(new Tuple(pair1.x-1, pair1.y-1));
 					}
 				}
@@ -338,7 +338,7 @@ public class MyAI extends AI {
 		}
 	}
 
-	private Tuple checkSurrounding11(Tuple t1, Tuple t2){
+	private Tuple checkSurrounding11H(Tuple t1, Tuple t2){
 		Tuple t3 = null;
 		Tuple t4 = null;
 		if(!outBoundaries(t1.x-1, t1.y)){
@@ -368,7 +368,7 @@ public class MyAI extends AI {
 		return null;
 	}
 
-	private boolean checkSurrounding12(Tuple t1, Tuple t2){
+	private boolean checkSurrounding12H(Tuple t1, Tuple t2){
 		Tuple t3 = t2.x > t1.x ? new Tuple(t2.x+1, t2.y) : new Tuple(t2.x-1, t2.y);
 		if(outBoundaries(t3.x, t3.y)){
 			return false;
@@ -397,7 +397,37 @@ public class MyAI extends AI {
 	}
 
 	private void findPatternVertical(){
-		
+		while(reducedListVertical.size() >= 2){
+			//Check if first element is 1
+			if(reducedListVertical.firstEntry().getValue() == 1){
+				Tuple pair1 = reducedListVertical.pollFirstEntry().getKey();
+				if(reducedListVertical.firstEntry().getValue() == 2 && (reducedListVertical.firstKey().y == pair1.y)){
+					//Check if second element is 2 (pattern 1-2)
+					Tuple pair2 = reducedListVertical.firstKey();
+					if(checkSurrounding12V(pair1, pair2)){
+						needFlagging.add(new Tuple(pair2.x+1, pair2.y+1));
+					}
+				} else if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().y == pair1.y)){
+					//Check if second element is 1 (pattern 1-1)
+					Tuple pair2 = reducedListVertical.firstKey();
+					Tuple flagPair = checkSurrounding11V(pair1, pair2);
+					if(flagPair != null){
+						needUncovering.add(flagPair);
+					}
+				}
+			} 
+			//Check if first element is 2
+			else if(reducedListVertical.firstEntry().getValue() == 2){
+				Tuple pair1 = reducedListVertical.pollFirstEntry().getKey();
+				if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().y == pair1.y)){
+					//Check if second element is 1 (pattern 2-1)
+					Tuple pair2 = reducedListVertical.firstKey();
+					if(checkSurrounding12V(pair1, pair2)){
+						needFlagging.add(new Tuple(pair1.x-1, pair1.y-1));
+					}
+				}
+			}
+		}
 	}
 
 	// For testing purpose only
