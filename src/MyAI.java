@@ -393,7 +393,7 @@ public class MyAI extends AI {
 	}
 
 	private boolean isTopOpen(Tuple t){
-		return value(t.x-1, t.y) == 0;
+		return value(t.x, t.y+1) == 0;
 	}
 
 	private void findPatternVertical(){
@@ -428,6 +428,64 @@ public class MyAI extends AI {
 				}
 			}
 		}
+	}
+
+	private Tuple checkSurrounding11V(Tuple t1, Tuple t2){
+		Tuple t3 = null;
+		Tuple t4 = null;
+		if(!outBoundaries(t1.x, t1.y-1)){
+			t3 = new Tuple(t1.x, t1.y-1);
+		} if(!outBoundaries(t1.x, t1.y+1)){
+			t4 = new Tuple(t1.x, t1.y+1);
+		}
+
+		if(outBoundaries(t1.x-1, t1.y) || (isLeftOpen(t1) && isLeftOpen(t2) && (t3 == null || isLeftOpen(t3)) && (t4 == null || isLeftOpen(t4)))){
+			if(!outBoundaries(t1.x+1, t1.y) && isRightOpen(t1) && isRightOpen(t2)){
+				if((t3 == null || isRightOpen(t3)) && t4 != null){
+					return new Tuple(t4.x+1, t4.y);
+				} else if((t4 == null || isRightOpen(t4)) && t3 != null){
+					return new Tuple(t3.x+1, t3.y);
+				}
+			}
+		}
+		else if(outBoundaries(t1.x+1, t1.y) || (isRightOpen(t1) && isRightOpen(t2) && (t3 == null || isRightOpen(t3)) && (t4 == null || isRightOpen(t4)))){
+			if(!outBoundaries(t1.x-1, t1.y) && isLeftOpen(t1) && isLeftOpen(t2)){
+				if((t3 == null || isLeftOpen(t3)) && t4 != null){
+					return new Tuple(t4.x-1, t4.y);
+				} else if((t4 == null || isLeftOpen(t4)) && t3 != null){
+					return new Tuple(t3.x-1, t3.y);
+				}
+			}
+		}
+		return null;
+	}
+
+	private boolean checkSurrounding12V(Tuple t1, Tuple t2){
+		Tuple t3 = t2.y > t1.y ? new Tuple(t2.x+1, t2.y) : new Tuple(t2.x-1, t2.y);
+		if(outBoundaries(t3.x, t3.y)){
+			return false;
+		}
+		
+		if(outBoundaries(t1.x-1, t1.y) || (isLeftOpen(t1) && isLeftOpen(t2) && isLeftOpen(t3))){
+			if(!outBoundaries(t1.x+1, t1.y) && isRightOpen(t1) && isRightOpen(t2) && isRightOpen(t3)){
+				return true;
+			}
+		}
+		else if(outBoundaries(t1.x+1, t1.y) || (isRightOpen(t1) && isRightOpen(t2) && isRightOpen(t3))){
+			if(!outBoundaries(t1.x-1, t1.y) && (isLeftOpen(t1) && isLeftOpen(t2) && isLeftOpen(t3))){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	private boolean isLeftOpen(Tuple t){
+		return value(t.x-1, t.y) == 0;
+	}
+
+	private boolean isRightOpen(Tuple t){
+		return value(t.x+1, t.y) == 0;
 	}
 
 	// For testing purpose only
