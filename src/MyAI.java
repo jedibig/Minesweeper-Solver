@@ -136,6 +136,7 @@ public class MyAI extends AI {
 					reduceNumber(coor);
 				}
 				findPatternHorizontal();
+				findPatternVertical();
 
 				actionStr = "L";
 				valid = true;
@@ -401,13 +402,13 @@ public class MyAI extends AI {
 			//Check if first element is 1
 			if(reducedListVertical.firstEntry().getValue() == 1){
 				Tuple pair1 = reducedListVertical.pollFirstEntry().getKey();
-				if(reducedListVertical.firstEntry().getValue() == 2 && (reducedListVertical.firstKey().y == pair1.y)){
+				if(reducedListVertical.firstEntry().getValue() == 2 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 2 (pattern 1-2)
 					Tuple pair2 = reducedListVertical.firstKey();
 					if(checkSurrounding12V(pair1, pair2)){
-						needFlagging.add(new Tuple(pair2.x+1, pair2.y+1));
+						needFlagging.add(new Tuple(pair2.x+1, pair2.y-1));
 					}
-				} else if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().y == pair1.y)){
+				} else if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 1 (pattern 1-1)
 					Tuple pair2 = reducedListVertical.firstKey();
 					Tuple flagPair = checkSurrounding11V(pair1, pair2);
@@ -419,11 +420,11 @@ public class MyAI extends AI {
 			//Check if first element is 2
 			else if(reducedListVertical.firstEntry().getValue() == 2){
 				Tuple pair1 = reducedListVertical.pollFirstEntry().getKey();
-				if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().y == pair1.y)){
+				if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 1 (pattern 2-1)
 					Tuple pair2 = reducedListVertical.firstKey();
 					if(checkSurrounding12V(pair1, pair2)){
-						needFlagging.add(new Tuple(pair1.x-1, pair1.y-1));
+						needFlagging.add(new Tuple(pair1.x-1, pair1.y+1));
 					}
 				}
 			}
