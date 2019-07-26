@@ -22,8 +22,8 @@ import java.util.LinkedList;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.TreeMap;
-import java.util.Collections; 
-import java.util.Comparator; 
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -35,11 +35,11 @@ public class MyAI extends AI {
 	// 	  number. If your most recent move is an Action.UNCOVER action, this value will
 	//	  be the number of the tile just uncovered. If your most recent move is
 	//    not Action.UNCOVER, then the value will be -1.
-	// 
+	//
 	// 3) Feel free to implement any helper functions.
 	//
 	// ###################### END OF INSTURCTIONS #######################
-	
+
 	// This line is to remove compiler warnings related to using Java generics
 	// if you decide to do so in your implementation.
 	// @SuppressWarnings("unchecked")
@@ -52,7 +52,8 @@ public class MyAI extends AI {
 	private LinkedList<Tuple> needUncovering;	// List of coordinates where it is safe to uncover
 	private LinkedList<Tuple> needFlagging;		// List of coordinates where flagging is needed
 	private LinkedList<Tuple> safeTile;			// List of coordinates where it is uncovered and have one or more covered tiles surrounding it
-	private TreeMap<Tuple, Integer> reducedList;
+	private TreeMap<Tuple, Integer> reducedListHorizontal;
+	private TreeMap<Tuple, Integer> reducedListVertical;
 
 	public MyAI(int rowDimension, int colDimension, int totalMines, int startX, int startY) {
 		// ################### Implement Constructor (required) ####################
@@ -64,9 +65,22 @@ public class MyAI extends AI {
 		needUncovering = new LinkedList<Tuple>();
 		needFlagging = new LinkedList<Tuple>();
 		safeTile = new LinkedList<Tuple>();
-		reducedList = new TreeMap<>(new SortByCoor());
+		reducedListHorizontal = new TreeMap<>(
+			new Comparator<Tuple>(){
+				@Override
+				public int compare(Tuple t1, Tuple t2){
+					return t1.y = t2.y ? t1.x - t2.x : t1.y - t2.y
+				}
+			});
+		reducedListVertical = new TreeMap<>(
+					new Comparator<Tuple>(){
+						@Override
+						public int compare(Tuple t1, Tuple t2){
+							return t1.x == t2.x ? t1.y - t2.y : t1.x - t2.x
+						}
+			});
 	}
-	
+
 	// ################## Implement getAction(), (required) #####################
 	public Action getAction(int number) {
 		boolean valid = false;
@@ -77,15 +91,15 @@ public class MyAI extends AI {
 		else {
 			safeTile.add(new Tuple(currX,currY));
 		}
-		
+
 		int countSafeTiles = safeTile.size();
 		int tooMany = 200;
 
 		while (!valid){
-			// if the value of currX and currY is > 0, that number is assigned towards the 2D array, 
+			// if the value of currX and currY is > 0, that number is assigned towards the 2D array,
 			// otherwise -1 if its 0, -2 if its flagged, 0 if its covered.
 
-			board[x(currX)][y(currY)] = number > 0 ? number : number - 1;	
+			board[x(currX)][y(currY)] = number > 0 ? number : number - 1;
 
 			if(needUncovering.size() > 0){
 				Tuple coor = needUncovering.pop();
@@ -103,38 +117,34 @@ public class MyAI extends AI {
 				// Possible circular loop
 				//Finish countSafeTile
 				countSafeTiles--;
-				
+
 				// printList(safeTile, "safeTile");
 				Tuple currCoor = safeTile.pop();
-				int value = board[x(currCoor.x)][y(currCoor.y)];
+				int value = value(currCoor.x, currCoor.y);
 
 				if (value > 0)
 					countFlagAndCoveredTiles(new Tuple(currCoor.x, currCoor.y), value);
-				
+
 			} else if (safeTile.size() > 0){
 				// 1-2 Pattern check
 
 				reducedList.clear();
 				for (Tuple coor : safeTile){
-					reducedList.put(coor, board[x(coor.x)][y(coor.y)]);
+					reducedListHorizontal.put(coor, value(coor.x, coor.y) );
+					reducedListVertical.put(coor, value(coor.x, coor.y) );
 					reduceNumber(coor);
 				}
 
-				findPattern();
-
-				
-				// printBoard();
-
-				// printList(needUncovering, "needUncovering");
-				// printList(needFlagging, "needFlagging");
+				findPatternHorizontal();
+				findPatternVertical();
 
 				if (tooMany-- < 0){
 					actionStr = "L";
 					valid = true;
 				}
 			} else {
-				
-				
+
+
 
 				actionStr = "L";
 				valid = true;
@@ -146,7 +156,7 @@ public class MyAI extends AI {
 		}
 		else if (actionStr.equals("F")) {
 			return new Action(Action.ACTION.FLAG, currX, currY);
-		} 
+		}
 		else {
 			// printBoard();
 			return new Action(Action.ACTION.LEAVE,1,1);
@@ -195,12 +205,11 @@ public class MyAI extends AI {
 				if(outBoundaries(coor.x, coor.y))
 					continue;
 				try{
-					if(board[x(coor.x)][y(coor.y)] != 0)
+					if(value(coor.x,coor.y) != 0)
 						continue;
 				} catch (ArrayIndexOutOfBoundsException e) {
 					System.err.printf("Array out of bound. Was trying to access (%d,%d) with rowsize: %d and colsize: %d.\n",coor.x,coor.y,rowSize,colSize);
 				}
-				
 				needUncovering.add(coor);
 			}
 		}
@@ -215,7 +224,7 @@ public class MyAI extends AI {
 		for (Tuple e: needUncovering){
 			if (e.x == pair.x && e.y == pair.y)
 				return true;
-		} 
+		}
 		return false;
 	}
 
@@ -227,24 +236,29 @@ public class MyAI extends AI {
 	// Get the y value in local array board
 	private int y(int yVal){
 		return yVal-1;
-	}	
+	}
+
+	// Get the board value of (x,y)
+	private int value(int x, int y){
+		return board[x-1][y-1];
+	}
 
 	// Check if surrounding tile with value 1 is uncovered
 	private void countFlagAndCoveredTiles(Tuple pair, int value){
 		LinkedList<Tuple> coveredTiles = new LinkedList<>();
 		LinkedList<Tuple> flaggedTiles = new LinkedList<>();
-	
+
 		for(int i = -1;i <= 1;i++){
 			for(int j = -1;j <= 1;j++){
 				if(outBoundaries(pair.x+i, pair.y+j))
 					continue;
 				else if(i == 0 && j == 0)
 					continue;
-				
-	
-				if(board[x(pair.x+i)][y(pair.y+j)] == 0){
+
+
+				if(value(pair.x+i, pair.y+j) == 0){
 					coveredTiles.add(new Tuple(pair.x+i, pair.y+j));
-				} else if (board[x(pair.x+i)][y(pair.y+j)] == -2)
+				} else if (value(pair.x+i, pair.y+j) == -2)
 					flaggedTiles.add(new Tuple(pair.x+i, pair.y+j));
 			}
 		}
@@ -269,8 +283,8 @@ public class MyAI extends AI {
 				else if(i == 0 && j == 0)
 					continue;
 
-				if(board[x(pair.x+i)][y(pair.y+j)] == -2){
-					// board[x(pair.x+i)][y(pair.y+j)] -= 1;
+				if(value(pair.x+i, pair.y+j) == -2){
+					// value(pair.x+i, pair.y+j) -= 1;
 					reduceSurroundingNumber(new Tuple(pair.x+i,pair.y+j));
 				}
 			}
@@ -285,9 +299,10 @@ public class MyAI extends AI {
 				else if(i == 0 && j == 0)
 					continue;
 
-				if(board[x(pair.x+i)][y(pair.y+j)] > 0)
-					reducedList.put(new Tuple(pair.x+i, pair.y+j), board[x(pair.x+i)][y(pair.y+j)]-1);
-
+				if(value(pair.x+i, pair.y+j) > 0){
+					reducedListHorizontal.put(new Tuple(pair.x+i, pair.y+j), value(pair.x+i, pair.y+j)-1);
+					reducedListVertical.put(new Tuple(pair.x+i, pair.y+j), value(pair.x+i, pair.y+j)-1);
+				}
 			}
 		}
 	}
@@ -300,7 +315,44 @@ public class MyAI extends AI {
 		}
 	}
 
-	//Find pattern then manipulate the 
+	private void findPatternHorizontal(){
+		boolean fourEl;
+		while (reducedListHorizontal.size() >= 3){
+			Tuple pair1,pair2,pair3,pair4;
+
+			// Check if first element has value 1
+			if(reducedListHorizontal.firstEntry().getValue() == 1)
+				pair1 = reducedList.pollFirstEntry().getKey();
+			else {
+				reducedList.pollFirstEntry()	// Pop the first element if not satisfy
+				continue;
+			}
+
+			// Check if second element has value 2 and is aligned
+			if (reducedListHorizontal.firstEntry().getValue() == 2 && reducedListHorizontal.firstKey().y == pair1.y)
+				pair2 = reducedList.pollFirstEntry().getKey();
+			else continue;
+
+			// Check for third element if it's aligned
+			if (reducedListHorizontal.firstKey().y == pair1.y) {
+				if (reducedListHorizontal.firstEntry().getValue() == 1)
+					pair3 = reducedList.pollFirstEntry().getKey();
+				else if (reducedListHorizontal.firstEntry().getValue() == 2){
+					pair3 = reducedList.pollFirstEntry().getKey();
+					// Check for fourth element
+					if (reducedListHorizontal.firstEntry() != null && reducedListHorizontal.firstKey().y == pair1.y && reducedListHorizontal.firstEntry().getValue() == 1)
+						pair4 = reducedList.pollFirstEntry().getKey();
+					else {
+						reducedListHorizontal.put(pair3, 2);
+						continue
+					}
+				}
+				else continue;
+			} else continue;
+		}
+	}
+
+	//Find pattern then manipulate the
 	private void findPattern(){
 		while (reducedList.size() >= 3){
 			boolean vertical = false;
@@ -317,7 +369,7 @@ public class MyAI extends AI {
 					if(reducedList.firstEntry().getValue() == 1){
 						Tuple pair3 = reducedList.pollFirstEntry().getKey();
 						if(horizontal && pair3.y == pair2.y){
-							if(board[x(pair1.x)][y(pair1.y)+1] == 0 && board[x(pair2.x)][y(pair2.y)+1] == 0 && board[x(pair3.x)][y(pair3.y)+1] == 0){
+							if(value(pair1.x, pair1.y+1) == 0 && value(pair2.x, pair2.y+1) == 0 && value(pair3.x, pair3.y+1) == 0){
 								//Flag on top
 								needFlagging.add(new Tuple(pair1.x, (pair1.y)+1));
 								needFlagging.add(new Tuple(pair3.x, (pair3.y)+1));
@@ -327,9 +379,9 @@ public class MyAI extends AI {
 								needFlagging.add(new Tuple(pair1.x, (pair1.y)-1));
 								needFlagging.add(new Tuple(pair3.x, (pair3.y)-1));
 								needUncovering.add(new Tuple(pair2.x, (pair2.y)-1));
-							}	
+							}
 						} else if(vertical && pair3.x == pair2.x){
-							if(board[x(pair1.x)+1][y(pair1.y)] == 0 && board[x(pair2.x)+1][y(pair2.y)] == 0 && board[x(pair3.x)+1][y(pair3.y)] == 0){
+							if(value(pair1.x+1, pair1.y) == 0 && value(pair2.x+1, pair2.y) == 0 && value(pair3.x+1, pair3.y) == 0){
 								//Flag on right
 								needFlagging.add(new Tuple(pair1.x+1, pair1.y));
 								needFlagging.add(new Tuple(pair3.x+1, pair3.y));
@@ -349,7 +401,7 @@ public class MyAI extends AI {
 							Tuple pair4 = reducedList.pollFirstEntry().getKey();
 							if (horizontal && pair3.y == pair2.y && pair4.y == pair3.y){
 								//Found pattern 1221
-								if(board[x(pair1.x)][y(pair1.y)+1] == 0 && board[x(pair2.x)][y(pair2.y)+1] == 0 && board[x(pair3.x)][y(pair3.y)+1] == 0 && board[x(pair4.x)][y(pair4.y)+1] == 0){
+								if(value(pair1.x, pair1.y+1) == 0 && value(pair2.x, pair2.y+1) == 0 && value(pair3.x, pair3.y+1) == 0 && value(pair4.x, pair4.y+1) == 0){
 									//Flag on top
 									needFlagging.add(new Tuple(pair2.x, (pair2.y)+1));
 									needFlagging.add(new Tuple(pair3.x, (pair3.y)+1));
@@ -363,8 +415,8 @@ public class MyAI extends AI {
 									needUncovering.add(new Tuple(pair4.x, (pair4.y)-1));
 								}
 							} else if (vertical && pair3.x == pair2.x && pair4.x == pair3.x){
-								if(board[x(pair4.x)][y(pair4.y)] == 1){
-									if(board[x(pair1.x)+1][y(pair1.y)] == 0 && board[x(pair2.x)+1][y(pair2.y)] == 0 && board[x(pair3.x)+1][y(pair3.y)] == 0 && board[x(pair4.x)+1][y(pair4.y)] == 0){
+								if(value(pair4.x,pair4.y) == 1){
+									if(value(pair1.x+1, pair1.y) == 0 && value(pair2.x)+1,pair2.y) == 0 && value(pair3.x+1,pair3.y) == 0 && value(pair4.x+1, pair4.y) == 0){
 										//Flag on right
 										needFlagging.add(new Tuple(pair2.x+1, pair2.y));
 										needFlagging.add(new Tuple(pair3.x+1, pair3.y));
@@ -387,7 +439,7 @@ public class MyAI extends AI {
 						}
 					}
 				}
-			}	
+			}
 		}
 	}
 
@@ -403,10 +455,10 @@ public class MyAI extends AI {
 		for(int i = 1;i <= colSize;i++){
 			System.out.printf("%2d\t\t", i);
 			for(int j = 1;j <= rowSize;j++){
-				System.out.printf("%2d\t", board[x(i)][y(j)]);
+				System.out.printf("%2d\t", value(i,j));
 			}
 			System.out.println();
-		} 
+		}
 		System.out.println();
 	}
 }
