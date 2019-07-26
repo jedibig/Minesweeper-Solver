@@ -69,14 +69,14 @@ public class MyAI extends AI {
 			new Comparator<Tuple>(){
 				@Override
 				public int compare(Tuple t1, Tuple t2){
-					return t1.y = t2.y ? t1.x - t2.x : t1.y - t2.y
+					return t1.y = t2.y ? t1.x - t2.x : t1.y - t2.y;
 				}
 			});
 		reducedListVertical = new TreeMap<>(
 					new Comparator<Tuple>(){
 						@Override
 						public int compare(Tuple t1, Tuple t2){
-							return t1.x == t2.x ? t1.y - t2.y : t1.x - t2.x
+							return t1.x == t2.x ? t1.y - t2.y : t1.x - t2.x;
 						}
 			});
 	}
@@ -324,7 +324,7 @@ public class MyAI extends AI {
 			if(reducedListHorizontal.firstEntry().getValue() == 1)
 				pair1 = reducedList.pollFirstEntry().getKey();
 			else {
-				reducedList.pollFirstEntry()	// Pop the first element if not satisfy
+				reducedList.pollFirstEntry();	// Pop the first element if not satisfy
 				continue;
 			}
 
@@ -344,7 +344,7 @@ public class MyAI extends AI {
 						pair4 = reducedList.pollFirstEntry().getKey();
 					else {
 						reducedListHorizontal.put(pair3, 2);
-						continue
+						continue;
 					}
 				}
 				else continue;
@@ -416,7 +416,7 @@ public class MyAI extends AI {
 								}
 							} else if (vertical && pair3.x == pair2.x && pair4.x == pair3.x){
 								if(value(pair4.x,pair4.y) == 1){
-									if(value(pair1.x+1, pair1.y) == 0 && value(pair2.x)+1,pair2.y) == 0 && value(pair3.x+1,pair3.y) == 0 && value(pair4.x+1, pair4.y) == 0){
+									if(value(pair1.x+1, pair1.y) == 0 && value(pair2.x+1,pair2.y) == 0 && value(pair3.x+1,pair3.y) == 0 && value(pair4.x+1, pair4.y) == 0){
 										//Flag on right
 										needFlagging.add(new Tuple(pair2.x+1, pair2.y));
 										needFlagging.add(new Tuple(pair3.x+1, pair3.y));
