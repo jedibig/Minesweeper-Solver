@@ -93,7 +93,6 @@ public class MyAI extends AI {
 		}
 
 		int countSafeTiles = safeTile.size();
-		int tooMany = 200;
 
 		while (!valid){
 			// if the value of currX and currY is > 0, that number is assigned towards the 2D array,
@@ -171,11 +170,6 @@ public class MyAI extends AI {
 		public Tuple(int x, int y){
 			this.x = x;
 			this.y = y;
-		}
-
-		public Tuple(){
-			this.x = -1;
-			this.y = -1;
 		}
 
 		@Override
