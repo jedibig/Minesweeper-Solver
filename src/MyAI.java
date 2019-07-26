@@ -135,6 +135,7 @@ public class MyAI extends AI {
 					reducedListVertical.put(coor, value(coor.x, coor.y) );
 					reduceNumber(coor);
 				}
+				findPatternHorizontal();
 
 				actionStr = "L";
 				valid = true;
@@ -301,6 +302,102 @@ public class MyAI extends AI {
 				}
 			}
 		}
+	}
+
+	private void findPatternHorizontal(){
+		while(reducedListHorizontal.size() >= 2){
+			//Check if first element is 1
+			if(reducedListHorizontal.firstEntry().getValue() == 1){
+				Tuple pair1 = reducedListHorizontal.pollFirstEntry().getKey();
+				if(reducedListHorizontal.firstEntry().getValue() == 2 && (reducedListHorizontal.firstKey().y == pair1.y)){
+					//Check if second element is 2 (pattern 1-2)
+					Tuple pair2 = reducedListHorizontal.firstKey();
+					if(checkSurrounding12(pair1, pair2)){
+						needFlagging.add(new Tuple(pair2.x+1, pair2.y+1));
+					}
+				} else if(reducedListHorizontal.firstEntry().getValue() == 1 && (reducedListHorizontal.firstKey().y == pair1.y)){
+					//Check if second element is 1 (pattern 1-1)
+					Tuple pair2 = reducedListHorizontal.firstKey();
+					Tuple flagPair = checkSurrounding11(pair1, pair2);
+					if(flagPair != null){
+						needUncovering.add(flagPair);
+					}
+				}
+			} 
+			//Check if first element is 2
+			else if(reducedListHorizontal.firstEntry().getValue() == 2){
+				Tuple pair1 = reducedListHorizontal.pollFirstEntry().getKey();
+				if(reducedListHorizontal.firstEntry().getValue() == 1 && (reducedListHorizontal.firstKey().y == pair1.y)){
+					//Check if second element is 1 (pattern 2-1)
+					Tuple pair2 = reducedListHorizontal.firstKey();
+					if(checkSurrounding12(pair1, pair2)){
+						needFlagging.add(new Tuple(pair1.x-1, pair1.y-1));
+					}
+				}
+			}
+		}
+	}
+
+	private Tuple checkSurrounding11(Tuple t1, Tuple t2){
+		Tuple t3 = null;
+		Tuple t4 = null;
+		if(!outBoundaries(t1.x-1, t1.y)){
+			t3 = new Tuple(t1.x-1, t1.y);
+		} if(!outBoundaries(t1.x+1, t1.y)){
+			t4 = new Tuple(t1.x+1, t1.y);
+		}
+
+		if(outBoundaries(t1.x, t1.y-1) || (isBottomOpen(t1) && isBottomOpen(t2) && (t3 == null || isBottomOpen(t3)) && (t4 == null || isBottomOpen(t4)))){
+			if(!outBoundaries(t1.x, t1.y+1) && isTopOpen(t1) && isTopOpen(t2)){
+				if((t3 == null || isTopOpen(t3)) && t4 != null){
+					return new Tuple(t4.x, t4.y+1);
+				} else if((t4 == null || isTopOpen(t4)) && t3 != null){
+					return new Tuple(t3.x, t3.y+1);
+				}
+			}
+		}
+		else if(outBoundaries(t1.x, t1.y+1) || (isTopOpen(t1) && isTopOpen(t2) && (t3 == null || isTopOpen(t3)) && (t4 == null || isTopOpen(t4)))){
+			if(!outBoundaries(t1.x, t1.y-1) && isBottomOpen(t1) && isBottomOpen(t2)){
+				if((t3 == null || isBottomOpen(t3)) && t4 != null){
+					return new Tuple(t4.x, t4.y-1);
+				} else if((t4 == null || isBottomOpen(t4)) && t3 != null){
+					return new Tuple(t3.x, t3.y-1);
+				}
+			}
+		}
+		return null;
+	}
+
+	private boolean checkSurrounding12(Tuple t1, Tuple t2){
+		Tuple t3 = t2.x > t1.x ? new Tuple(t2.x+1, t2.y) : new Tuple(t2.x-1, t2.y);
+		if(outBoundaries(t3.x, t3.y)){
+			return false;
+		}
+		
+		if(outBoundaries(t1.x, t1.y-1) || (isBottomOpen(t1) && isBottomOpen(t2) && isBottomOpen(t3))){
+			if(!outBoundaries(t1.x, t1.y+1) && isTopOpen(t1) && isTopOpen(t2) && isTopOpen(t3)){
+				return true;
+			}
+		}
+		else if(outBoundaries(t1.x, t1.y+1) || (isTopOpen(t1) && isTopOpen(t2) && isTopOpen(t3))){
+			if(!outBoundaries(t1.x, t1.y-1) && (isBottomOpen(t1) && isBottomOpen(t2) && isBottomOpen(t3))){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	private boolean isBottomOpen(Tuple t){
+		return value(t.x, t.y-1) == 0;
+	}
+
+	private boolean isTopOpen(Tuple t){
+		return value(t.x-1, t.y) == 0;
+	}
+
+	private void findPatternVertical(){
+		
 	}
 
 	// For testing purpose only
