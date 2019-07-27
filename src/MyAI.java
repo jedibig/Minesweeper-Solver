@@ -296,16 +296,11 @@ public class MyAI extends AI {
 				if(reducedListHorizontal.firstEntry().getValue() == 2 && (reducedListHorizontal.firstKey().y == pair1.y)){
 					//Check if second element is 2 (pattern 1-2)
 					pair2 = reducedListHorizontal.firstKey();
-					if(checkSurrounding12H(pair1, pair2)){
-						needFlagging.add(new Tuple(pair2.x+1, pair2.y+1));
-					}
+					checkSurrounding12H(pair1, pair2));
 				} else if(reducedListHorizontal.firstEntry().getValue() == 1 && (reducedListHorizontal.firstKey().y == pair1.y)){
 					//Check if second element is 1 (pattern 1-1)
 					pair2 = reducedListHorizontal.firstKey();
-					Tuple flagPair = checkSurrounding11H(pair1, pair2);
-					if(flagPair != null){
-						needUncovering.add(flagPair);
-					}
+					checkSurrounding11H(pair1, pair2);
 				}
 			} 
 			//Check if first element is 2
@@ -314,71 +309,69 @@ public class MyAI extends AI {
 				if(reducedListHorizontal.firstEntry().getValue() == 1 && (reducedListHorizontal.firstKey().y == pair1.y)){
 					//Check if second element is 1 (pattern 2-1)
 					pair2 = reducedListHorizontal.firstKey();
-					if(checkSurrounding12H(pair1, pair2)){
-						needFlagging.add(new Tuple(pair1.x-1, pair1.y-1));
-					}
+					checkSurrounding12H(pair2, pair1);
 				}
-			}
-			else reducedListHorizontal.pollFirstEntry();
+			} else reducedListHorizontal.pollFirstEntry();
 		}
 	}
 
-	private Tuple checkSurrounding11H(Tuple t1, Tuple t2){
+	private void checkSurrounding11H(Tuple t1, Tuple t2){
 		Tuple t3 = null;
 		Tuple t4 = null;
 		if(!outBoundaries(t1.x-1, t1.y)){
 			t3 = new Tuple(t1.x-1, t1.y);
-		} if(!outBoundaries(t1.x+1, t1.y)){
-			t4 = new Tuple(t1.x+1, t1.y);
+			if(value(t3.x, t3.y) == 0)
+				return;
+		} if(!outBoundaries(t2.x+1, t2.y)){
+			t4 = new Tuple(t2.x+1, t2.y);
+			if(value(t4.x, t4.y) == 0)
+				return;
 		}
 
-		if(outBoundaries(t1.x, t1.y-1) || (isBottomOpen(t1) && isBottomOpen(t2) && (t3 == null || isBottomOpen(t3)) && (t4 == null || isBottomOpen(t4)))){
-			if(!outBoundaries(t1.x, t1.y+1) && isTopOpen(t1) && isTopOpen(t2)){
-				if((t3 == null || isTopOpen(t3)) && t4 != null){
-					return new Tuple(t4.x, t4.y+1);
-				} else if((t4 == null || isTopOpen(t4)) && t3 != null){
-					return new Tuple(t3.x, t3.y+1);
+		if(outBoundaries(t1.x, t1.y-1) || (isBottomUncovered(t1) && isBottomUncovered(t2) && (t3 == null || isBottomUncovered(t3)) && (t4 == null || isBottomUncovered(t4)))){
+			if(!outBoundaries(t1.x, t1.y+1) && !isTopUncovered(t1) && !isTopUncovered(t2)){
+				if((t3 == null || isTopUncovered(t3)) && t4 != null && !isTopUncovered(t4)){
+					needUncovering.add(new Tuple(t4.x, t4.y+1));
+				} else if((t4 == null || isTopUncovered(t4)) && t3 != null && !isTopUncovered(t3)){
+					needUncovering.add(new Tuple(t3.x, t3.y+1));
 				}
 			}
 		}
-		else if(outBoundaries(t1.x, t1.y+1) || (isTopOpen(t1) && isTopOpen(t2) && (t3 == null || isTopOpen(t3)) && (t4 == null || isTopOpen(t4)))){
-			if(!outBoundaries(t1.x, t1.y-1) && isBottomOpen(t1) && isBottomOpen(t2)){
-				if((t3 == null || isBottomOpen(t3)) && t4 != null){
-					return new Tuple(t4.x, t4.y-1);
-				} else if((t4 == null || isBottomOpen(t4)) && t3 != null){
-					return new Tuple(t3.x, t3.y-1);
+		else if(outBoundaries(t1.x, t1.y+1) || (isTopUncovered(t1) && isTopUncovered(t2) && (t3 == null || isTopUncovered(t3)) && (t4 == null || isTopUncovered(t4)))){
+			if(!outBoundaries(t1.x, t1.y-1) && !isBottomUncovered(t1) && !isBottomUncovered(t2)){
+				if((t3 == null || isBottomUncovered(t3)) && t4 != null && !isBottomUncovered(t4)){
+					needUncovering.add(new Tuple(t4.x, t4.y-1));
+				} else if((t4 == null || isBottomUncovered(t4)) && t3 != null && !isBottomUncovered(t3)){
+					needUncovering.add(new Tuple(t3.x, t3.y-1));
 				}
 			}
 		}
-		return null;
 	}
 
-	private boolean checkSurrounding12H(Tuple t1, Tuple t2){
+	private void checkSurrounding12H(Tuple t1, Tuple t2){
 		Tuple t3 = t2.x > t1.x ? new Tuple(t2.x+1, t2.y) : new Tuple(t2.x-1, t2.y);
-		if(outBoundaries(t3.x, t3.y)){
-			return false;
+		if(outBoundaries(t3.x, t3.y) || value(t3.x, t3.y) == 0){
+			return;
 		}
 		
-		if(outBoundaries(t1.x, t1.y-1) || (isBottomOpen(t1) && isBottomOpen(t2) && isBottomOpen(t3))){
-			if(!outBoundaries(t1.x, t1.y+1) && isTopOpen(t1) && isTopOpen(t2) && isTopOpen(t3)){
-				return true;
+		if(outBoundaries(t1.x, t1.y-1) || (isBottomUncovered(t1) && isBottomUncovered(t2) && isBottomUncovered(t3))){
+			if(!outBoundaries(t1.x, t1.y+1) && !isTopUncovered(t1) && !isTopUncovered(t2) && !isTopUncovered(t3)){
+				needFlagging.add(new Tuple(t3.x, t3.y-1));
 			}
 		}
-		else if(outBoundaries(t1.x, t1.y+1) || (isTopOpen(t1) && isTopOpen(t2) && isTopOpen(t3))){
-			if(!outBoundaries(t1.x, t1.y-1) && (isBottomOpen(t1) && isBottomOpen(t2) && isBottomOpen(t3))){
-				return true;
+		else if(outBoundaries(t1.x, t1.y+1) || (isTopUncovered(t1) && isTopUncovered(t2) && isTopUncovered(t3))){
+			if(!outBoundaries(t1.x, t1.y-1) && !isBottomUncovered(t1) && !isBottomUncovered(t2) && !isBottomUncovered(t3)){
+				needFlagging.add(new Tuple(t3.x, t3.y+1));
 			}
 		}
-		
-		return false;
 	}
 
-	private boolean isBottomOpen(Tuple t){
-		return value(t.x, t.y-1) == 0;
+	private boolean isBottomUncovered(Tuple t){
+		return value(t.x, t.y-1) != 0;
 	}
 
-	private boolean isTopOpen(Tuple t){
-		return value(t.x, t.y+1) == 0;
+	private boolean isTopUncovered(Tuple t){
+		return value(t.x, t.y+1) != 0;
 	}
 
 	private void findPatternVertical(){
