@@ -76,7 +76,7 @@ public class MyAI extends AI {
 					new Comparator<Tuple>(){
 						@Override
 						public int compare(Tuple t1, Tuple t2){
-							return t1.x == t2.x ? t1.y - t2.y : t1.x - t2.x;
+							return t1.x == t2.x ? t2.y - t1.y : t2.x - t1.x;
 						}
 			});
 	}
@@ -129,17 +129,17 @@ public class MyAI extends AI {
 
 				reducedListHorizontal.clear();
 				reducedListVertical.clear();
-				for (Tuple coor : safeTile){
-					reducedListHorizontal.put(coor, value(coor.x, coor.y) );
-					reducedListVertical.put(coor, value(coor.x, coor.y) );
+				for (Tuple coor : safeTile)
 					reduceNumber(coor);
-				}
 
 				findPatternHorizontal();
 				findPatternVertical();
 
 				printBoard();
-				
+
+				printList(needFlagging, "needFlagging");
+				// actionStr = "L";
+				// valid = true;
 			} else {
 				actionStr = "L";
 				valid = true;
@@ -180,6 +180,11 @@ public class MyAI extends AI {
 			Tuple object = (Tuple) o;
 			return object.x == object.x && object.y == y;
 		}
+
+		@Override
+		public String toString() { 
+			return String.format("(%d,%d)", x, y); 
+		} 
 	}
 
 	// If value related to tile is 0, call this function
@@ -265,6 +270,7 @@ public class MyAI extends AI {
 	}
 
 	private void reduceNumber(Tuple pair){
+		int value = value(pair.x, pair.y);
 		for(int i = -1;i <= 1;i++){
 			for(int j = -1;j <= 1;j++){
 
@@ -273,28 +279,12 @@ public class MyAI extends AI {
 				else if(i == 0 && j == 0)
 					continue;
 
-				if(value(pair.x+i, pair.y+j) == -2){
-					// value(pair.x+i, pair.y+j) -= 1;
-					reduceSurroundingNumber(new Tuple(pair.x+i,pair.y+j));
-				}
+				if(value(pair.x+i, pair.y+j) == -2)
+					value--;
 			}
 		}
-	}
-
-	private void reduceSurroundingNumber(Tuple pair){
-		for(int i = -1;i <= 1;i++){
-			for(int j = -1;j <= 1;j++){
-				if(outBoundaries(pair.x+i, pair.y+j))
-					continue;
-				else if(i == 0 && j == 0)
-					continue;
-
-				if(value(pair.x+i, pair.y+j) > 0){
-					reducedListHorizontal.put(new Tuple(pair.x+i, pair.y+j), value(pair.x+i, pair.y+j)-1);
-					reducedListVertical.put(new Tuple(pair.x+i, pair.y+j), value(pair.x+i, pair.y+j)-1);
-				}
-			}
-		}
+		reducedListHorizontal.put(pair, value);
+		reducedListVertical.put(pair, value);
 	}
 
 	private void findPatternHorizontal(){
@@ -400,14 +390,13 @@ public class MyAI extends AI {
 				if(reducedListVertical.firstEntry().getValue() == 2 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 2 (pattern 1-2)
 					pair2 = reducedListVertical.firstKey();
-					checkSurrounding12V(pair1, pair2)
+					System.out.println("Find pattern 12 coord: " + pair1 + " " + pair2);
+					checkSurrounding12V(pair1, pair2);
 				} else if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 1 (pattern 1-1)
 					pair2 = reducedListVertical.firstKey();
-					Tuple flagPair = checkSurrounding11V(pair1, pair2);
-					if(flagPair != null){
-						needUncovering.add(flagPair);
-					}
+					System.out.println("Find pattern 11 coord: " + pair1 + " " + pair2);
+					checkSurrounding11V(pair1, pair2);
 				}
 			} 
 			//Check if first element is 2
@@ -416,58 +405,77 @@ public class MyAI extends AI {
 				if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 1 (pattern 2-1)
 					pair2 = reducedListVertical.firstKey();
-					checkSurrounding12V(pair1, pair2)
+					System.out.println("Find pattern 21 coord: " + pair1 + " " + pair2);
+					checkSurrounding12V(pair2, pair1);
 				}
 			} else reducedListVertical.pollFirstEntry();
 		}
 	}
 
-	private Tuple checkSurrounding11V(Tuple t1, Tuple t2){
+	private void checkSurrounding11V(Tuple t1, Tuple t2){
 		Tuple t3 = null;
 		Tuple t4 = null;
-		if(!outBoundaries(t1.x, t1.y-1)){
-			t3 = new Tuple(t1.x, t1.y-1);
-		} if(!outBoundaries(t1.x, t1.y+1)){
-			t4 = new Tuple(t1.x, t1.y+1);
+		if(!outBoundaries(t1.x, t1.y+1)){
+			t3 = new Tuple(t1.x, t1.y+1);
+			if(value(t3.x,t3.y) == 0)
+				return;
+		} if(!outBoundaries(t2.x, t2.y-1)){
+			t4 = new Tuple(t2.x, t2.y-1);
+			if(value(t4.x,t4.y) == 0)
+				return;
 		}
 
+
+
 		if(outBoundaries(t1.x-1, t1.y) || (isLeftUncovered(t1) && isLeftUncovered(t2) && (t3 == null || isLeftUncovered(t3)) && (t4 == null || isLeftUncovered(t4)))){
-			if(!outBoundaries(t1.x+1, t1.y) && isRightUncovered(t1) && isRightUncovered(t2)){
-				if((t3 == null || isRightUncovered(t3)) && t4 != null){
-					return new Tuple(t4.x+1, t4.y);
-				} else if((t4 == null || isRightUncovered(t4)) && t3 != null){
-					return new Tuple(t3.x+1, t3.y);
-				}
+			System.err.printf("Here1\n");
+			if(!outBoundaries(t1.x+1, t1.y) && !isRightUncovered(t1) && !isRightUncovered(t2)){
+				System.err.printf("Here2\n");
+				if((t3 == null || isRightUncovered(t3)) && t4 != null && !isRightUncovered(t4))
+					needUncovering.add(new Tuple(t4.x+1,t4.y));
+				else if((t4 == null || isRightUncovered(t4)) && t3 != null && !isRightUncovered(t3))
+					needUncovering.add(new Tuple(t3.x+1, t3.y));
 			}
 		}
 		else if(outBoundaries(t1.x+1, t1.y) || (isRightUncovered(t1) && isRightUncovered(t2) && (t3 == null || isRightUncovered(t3)) && (t4 == null || isRightUncovered(t4)))){
-			if(!outBoundaries(t1.x-1, t1.y) && isLeftUncovered(t1) && isLeftUncovered(t2)){
-				if((t3 == null || isLeftUncovered(t3)) && t4 != null){
-					return new Tuple(t4.x-1, t4.y);
-				} else if((t4 == null || isLeftUncovered(t4)) && t3 != null){
-					return new Tuple(t3.x-1, t3.y);
-				}
+			System.err.printf("Here3\n");
+			System.err.printf("outboundaries: %b, isleftUnc(t1): %b, isleftUnc(t2): %b\n", !outBoundaries(t1.x-1, t1.y), isLeftUncovered(t1), isLeftUncovered(t2));
+			if(!outBoundaries(t1.x-1, t1.y) && !isLeftUncovered(t1) && !isLeftUncovered(t2)){
+				System.err.printf("Here4\n");
+				if((t3 == null || isLeftUncovered(t3)) && t4 != null && !isLeftUncovered(t4))
+					needUncovering.add(new  Tuple(t4.x-1, t4.y));
+				else if((t4 == null || isLeftUncovered(t4)) && t3 != null && !isLeftUncovered(t3))
+					needUncovering.add(new Tuple(t3.x-1, t3.y));
 			}
 		}
-		return null;
 	}
 
 	private void checkSurrounding12V(Tuple t1, Tuple t2){
 		Tuple t3 = t2.y > t1.y ? new Tuple(t2.x, t2.y+1) : new Tuple(t2.x, t2.y-1);
-		if(outBoundaries(t3.x, t3.y)){
+		if(outBoundaries(t3.x, t3.y) || value(t3.x,t3.y) == 0){
 			return;
 		}
-		// if (!outBoundaries(t1.x-1, t1.y))
-		// 	System.out.printf("t1: (%d,%d) %b\t t2: (%d,%d) %b\t t3: (%d,%d) %b\n", t1.x, t1.y, isLeftUncovered(t1), t2.x, t2.y, isLeftUncovered(t2), t3.x, t3.y, isLeftUncovered(t3) );
-
-
-		if(outBoundaries(t1.x-1, t1.y) || (isLeftUncovered(t1) && isLeftUncovered(t2) && isLeftUncovered(t3)))	// left side is open or out of bpunds
+		
+		if(outBoundaries(t1.x-1, t1.y) || (isLeftUncovered(t1) && isLeftUncovered(t2) && isLeftUncovered(t3))){
 			if (!(outBoundaries(t1.x+1, t1.y) || isRightUncovered(t1) || isRightUncovered(t2) || isRightUncovered(t3)))
 				needFlagging.add(new Tuple(t3.x+1, t3.y));
-		else if(outBoundaries(t1.x+1, t1.y) || (isRightUncovered(t1) && isRightUncovered(t2) && isRightUncovered(t3)))
-			if (!( outBoundaries(t1.x-1, t1.y) || isLeftUncovered(t1) || isLeftUncovered(t2) || isLeftUncovered(t3)))
+		}	// left side is open or out of bpunds
+
+		else if( outBoundaries(t1.x+1, t1.y) || isRightUncovered(t1) && isRightUncovered(t2) && isRightUncovered(t3) ){
+			if (!outBoundaries(t1.x-1, t1.y) && !isLeftUncovered(t1) && !isLeftUncovered(t2) && !isLeftUncovered(t3)){
+			// if (!( outBoundaries(t1.x-1, t1.y) || isLeftUncovered(t1) || isLeftUncovered(t2) || isLeftUncovered(t3))){
 				needFlagging.add(new Tuple(t3.x-1, t3.y));
+			}
 		}
+		
+		// if (!outBoundaries(t1.x-1, t1.y)){
+		// 	System.out.printf("l: t1: (%d,%d) %b\t t2: (%d,%d) %b\t t3: (%d,%d) %b\n", t1.x, t1.y, isLeftUncovered(t1), t2.x, t2.y, isLeftUncovered(t2), t3.x, t3.y, isLeftUncovered(t3) );
+		// 	System.out.printf("r: t1: (%d,%d) %b\t t2: (%d,%d) %b\t t3: (%d,%d) %b\n", t1.x, t1.y, isRightUncovered(t1), t2.x, t2.y, isRightUncovered(t2), t3.x, t3.y, isRightUncovered(t3) );
+		// 	System.out.printf("outound1: %b\t outbound2: %b\n", outBoundaries(t1.x+1, t1.y), outBoundaries(t1.x-1, t1.y));
+		// }
+		
+		
+	}
 
 	private boolean isLeftUncovered(Tuple t){
 		return value(t.x-1, t.y) != 0;
