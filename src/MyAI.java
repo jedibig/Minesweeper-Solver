@@ -134,15 +134,13 @@ public class MyAI extends AI {
 					reducedListVertical.put(coor, value(coor.x, coor.y) );
 					reduceNumber(coor);
 				}
+
 				findPatternHorizontal();
 				findPatternVertical();
 
-				actionStr = "L";
-				valid = true;
+				printBoard();
+				
 			} else {
-
-
-
 				actionStr = "L";
 				valid = true;
 			}
@@ -300,19 +298,20 @@ public class MyAI extends AI {
 	}
 
 	private void findPatternHorizontal(){
+		Tuple pair1 = null, pair2 = null;
 		while(reducedListHorizontal.size() >= 2){
 			//Check if first element is 1
 			if(reducedListHorizontal.firstEntry().getValue() == 1){
-				Tuple pair1 = reducedListHorizontal.pollFirstEntry().getKey();
+				pair1 = reducedListHorizontal.pollFirstEntry().getKey();
 				if(reducedListHorizontal.firstEntry().getValue() == 2 && (reducedListHorizontal.firstKey().y == pair1.y)){
 					//Check if second element is 2 (pattern 1-2)
-					Tuple pair2 = reducedListHorizontal.firstKey();
+					pair2 = reducedListHorizontal.firstKey();
 					if(checkSurrounding12H(pair1, pair2)){
 						needFlagging.add(new Tuple(pair2.x+1, pair2.y+1));
 					}
 				} else if(reducedListHorizontal.firstEntry().getValue() == 1 && (reducedListHorizontal.firstKey().y == pair1.y)){
 					//Check if second element is 1 (pattern 1-1)
-					Tuple pair2 = reducedListHorizontal.firstKey();
+					pair2 = reducedListHorizontal.firstKey();
 					Tuple flagPair = checkSurrounding11H(pair1, pair2);
 					if(flagPair != null){
 						needUncovering.add(flagPair);
@@ -321,15 +320,16 @@ public class MyAI extends AI {
 			} 
 			//Check if first element is 2
 			else if(reducedListHorizontal.firstEntry().getValue() == 2){
-				Tuple pair1 = reducedListHorizontal.pollFirstEntry().getKey();
+				pair1 = reducedListHorizontal.pollFirstEntry().getKey();
 				if(reducedListHorizontal.firstEntry().getValue() == 1 && (reducedListHorizontal.firstKey().y == pair1.y)){
 					//Check if second element is 1 (pattern 2-1)
-					Tuple pair2 = reducedListHorizontal.firstKey();
+					pair2 = reducedListHorizontal.firstKey();
 					if(checkSurrounding12H(pair1, pair2)){
 						needFlagging.add(new Tuple(pair1.x-1, pair1.y-1));
 					}
 				}
 			}
+			else reducedListHorizontal.pollFirstEntry();
 		}
 	}
 
@@ -392,19 +392,18 @@ public class MyAI extends AI {
 	}
 
 	private void findPatternVertical(){
+		Tuple pair1 = null, pair2 = null;
 		while(reducedListVertical.size() >= 2){
 			//Check if first element is 1
 			if(reducedListVertical.firstEntry().getValue() == 1){
-				Tuple pair1 = reducedListVertical.pollFirstEntry().getKey();
+				pair1 = reducedListVertical.pollFirstEntry().getKey();
 				if(reducedListVertical.firstEntry().getValue() == 2 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 2 (pattern 1-2)
-					Tuple pair2 = reducedListVertical.firstKey();
-					if(checkSurrounding12V(pair1, pair2)){
-						needFlagging.add(new Tuple(pair2.x+1, pair2.y-1));
-					}
+					pair2 = reducedListVertical.firstKey();
+					checkSurrounding12V(pair1, pair2)
 				} else if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 1 (pattern 1-1)
-					Tuple pair2 = reducedListVertical.firstKey();
+					pair2 = reducedListVertical.firstKey();
 					Tuple flagPair = checkSurrounding11V(pair1, pair2);
 					if(flagPair != null){
 						needUncovering.add(flagPair);
@@ -413,15 +412,13 @@ public class MyAI extends AI {
 			} 
 			//Check if first element is 2
 			else if(reducedListVertical.firstEntry().getValue() == 2){
-				Tuple pair1 = reducedListVertical.pollFirstEntry().getKey();
+				pair1 = reducedListVertical.pollFirstEntry().getKey();
 				if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 1 (pattern 2-1)
-					Tuple pair2 = reducedListVertical.firstKey();
-					if(checkSurrounding12V(pair1, pair2)){
-						needFlagging.add(new Tuple(pair1.x-1, pair1.y+1));
-					}
+					pair2 = reducedListVertical.firstKey();
+					checkSurrounding12V(pair1, pair2)
 				}
-			}
+			} else reducedListVertical.pollFirstEntry();
 		}
 	}
 
@@ -434,20 +431,20 @@ public class MyAI extends AI {
 			t4 = new Tuple(t1.x, t1.y+1);
 		}
 
-		if(outBoundaries(t1.x-1, t1.y) || (isLeftOpen(t1) && isLeftOpen(t2) && (t3 == null || isLeftOpen(t3)) && (t4 == null || isLeftOpen(t4)))){
-			if(!outBoundaries(t1.x+1, t1.y) && isRightOpen(t1) && isRightOpen(t2)){
-				if((t3 == null || isRightOpen(t3)) && t4 != null){
+		if(outBoundaries(t1.x-1, t1.y) || (isLeftUncovered(t1) && isLeftUncovered(t2) && (t3 == null || isLeftUncovered(t3)) && (t4 == null || isLeftUncovered(t4)))){
+			if(!outBoundaries(t1.x+1, t1.y) && isRightUncovered(t1) && isRightUncovered(t2)){
+				if((t3 == null || isRightUncovered(t3)) && t4 != null){
 					return new Tuple(t4.x+1, t4.y);
-				} else if((t4 == null || isRightOpen(t4)) && t3 != null){
+				} else if((t4 == null || isRightUncovered(t4)) && t3 != null){
 					return new Tuple(t3.x+1, t3.y);
 				}
 			}
 		}
-		else if(outBoundaries(t1.x+1, t1.y) || (isRightOpen(t1) && isRightOpen(t2) && (t3 == null || isRightOpen(t3)) && (t4 == null || isRightOpen(t4)))){
-			if(!outBoundaries(t1.x-1, t1.y) && isLeftOpen(t1) && isLeftOpen(t2)){
-				if((t3 == null || isLeftOpen(t3)) && t4 != null){
+		else if(outBoundaries(t1.x+1, t1.y) || (isRightUncovered(t1) && isRightUncovered(t2) && (t3 == null || isRightUncovered(t3)) && (t4 == null || isRightUncovered(t4)))){
+			if(!outBoundaries(t1.x-1, t1.y) && isLeftUncovered(t1) && isLeftUncovered(t2)){
+				if((t3 == null || isLeftUncovered(t3)) && t4 != null){
 					return new Tuple(t4.x-1, t4.y);
-				} else if((t4 == null || isLeftOpen(t4)) && t3 != null){
+				} else if((t4 == null || isLeftUncovered(t4)) && t3 != null){
 					return new Tuple(t3.x-1, t3.y);
 				}
 			}
@@ -455,32 +452,29 @@ public class MyAI extends AI {
 		return null;
 	}
 
-	private boolean checkSurrounding12V(Tuple t1, Tuple t2){
-		Tuple t3 = t2.y > t1.y ? new Tuple(t2.x+1, t2.y) : new Tuple(t2.x-1, t2.y);
+	private void checkSurrounding12V(Tuple t1, Tuple t2){
+		Tuple t3 = t2.y > t1.y ? new Tuple(t2.x, t2.y+1) : new Tuple(t2.x, t2.y-1);
 		if(outBoundaries(t3.x, t3.y)){
-			return false;
+			return;
 		}
-		
-		if(outBoundaries(t1.x-1, t1.y) || (isLeftOpen(t1) && isLeftOpen(t2) && isLeftOpen(t3))){
-			if(!outBoundaries(t1.x+1, t1.y) && isRightOpen(t1) && isRightOpen(t2) && isRightOpen(t3)){
-				return true;
-			}
+		// if (!outBoundaries(t1.x-1, t1.y))
+		// 	System.out.printf("t1: (%d,%d) %b\t t2: (%d,%d) %b\t t3: (%d,%d) %b\n", t1.x, t1.y, isLeftUncovered(t1), t2.x, t2.y, isLeftUncovered(t2), t3.x, t3.y, isLeftUncovered(t3) );
+
+
+		if(outBoundaries(t1.x-1, t1.y) || (isLeftUncovered(t1) && isLeftUncovered(t2) && isLeftUncovered(t3)))	// left side is open or out of bpunds
+			if (!(outBoundaries(t1.x+1, t1.y) || isRightUncovered(t1) || isRightUncovered(t2) || isRightUncovered(t3)))
+				needFlagging.add(new Tuple(t3.x+1, t3.y));
+		else if(outBoundaries(t1.x+1, t1.y) || (isRightUncovered(t1) && isRightUncovered(t2) && isRightUncovered(t3)))
+			if (!( outBoundaries(t1.x-1, t1.y) || isLeftUncovered(t1) || isLeftUncovered(t2) || isLeftUncovered(t3)))
+				needFlagging.add(new Tuple(t3.x-1, t3.y));
 		}
-		else if(outBoundaries(t1.x+1, t1.y) || (isRightOpen(t1) && isRightOpen(t2) && isRightOpen(t3))){
-			if(!outBoundaries(t1.x-1, t1.y) && (isLeftOpen(t1) && isLeftOpen(t2) && isLeftOpen(t3))){
-				return true;
-			}
-		}
-		
-		return false;
+
+	private boolean isLeftUncovered(Tuple t){
+		return value(t.x-1, t.y) != 0;
 	}
 
-	private boolean isLeftOpen(Tuple t){
-		return value(t.x-1, t.y) == 0;
-	}
-
-	private boolean isRightOpen(Tuple t){
-		return value(t.x+1, t.y) == 0;
+	private boolean isRightUncovered(Tuple t){
+		return value(t.x+1, t.y) != 0;
 	}
 
 	// For testing purpose only
@@ -492,13 +486,17 @@ public class MyAI extends AI {
 	}
 
 	private void printBoard(){
-		for(int i = 1;i <= colSize;i++){
-			System.out.printf("%2d\t\t", i);
-			for(int j = 1;j <= rowSize;j++){
-				System.out.printf("%2d\t", value(i,j));
+		for(int i = rowSize; i >= 1; i--){
+			System.out.printf("%2d\t", i);
+			for(int j = 1;j <= colSize;j++){
+				System.out.printf("%2d ", value(j,i));
 			}
 			System.out.println();
 		}
+		System.out.printf("  \t");
+		for (int k = 1; k <= colSize; k++)
+			System.out.printf("%2d ", k);
 		System.out.println();
+
 	}
 }
