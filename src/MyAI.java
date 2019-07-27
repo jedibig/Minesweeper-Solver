@@ -390,12 +390,10 @@ public class MyAI extends AI {
 				if(reducedListVertical.firstEntry().getValue() == 2 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 2 (pattern 1-2)
 					pair2 = reducedListVertical.firstKey();
-					System.out.println("Find pattern 12 coord: " + pair1 + " " + pair2);
 					checkSurrounding12V(pair1, pair2);
 				} else if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 1 (pattern 1-1)
 					pair2 = reducedListVertical.firstKey();
-					System.out.println("Find pattern 11 coord: " + pair1 + " " + pair2);
 					checkSurrounding11V(pair1, pair2);
 				}
 			} 
@@ -405,7 +403,6 @@ public class MyAI extends AI {
 				if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 1 (pattern 2-1)
 					pair2 = reducedListVertical.firstKey();
-					System.out.println("Find pattern 21 coord: " + pair1 + " " + pair2);
 					checkSurrounding12V(pair2, pair1);
 				}
 			} else reducedListVertical.pollFirstEntry();
@@ -425,12 +422,8 @@ public class MyAI extends AI {
 				return;
 		}
 
-
-
 		if(outBoundaries(t1.x-1, t1.y) || (isLeftUncovered(t1) && isLeftUncovered(t2) && (t3 == null || isLeftUncovered(t3)) && (t4 == null || isLeftUncovered(t4)))){
-			System.err.printf("Here1\n");
 			if(!outBoundaries(t1.x+1, t1.y) && !isRightUncovered(t1) && !isRightUncovered(t2)){
-				System.err.printf("Here2\n");
 				if((t3 == null || isRightUncovered(t3)) && t4 != null && !isRightUncovered(t4))
 					needUncovering.add(new Tuple(t4.x+1,t4.y));
 				else if((t4 == null || isRightUncovered(t4)) && t3 != null && !isRightUncovered(t3))
@@ -438,10 +431,7 @@ public class MyAI extends AI {
 			}
 		}
 		else if(outBoundaries(t1.x+1, t1.y) || (isRightUncovered(t1) && isRightUncovered(t2) && (t3 == null || isRightUncovered(t3)) && (t4 == null || isRightUncovered(t4)))){
-			System.err.printf("Here3\n");
-			System.err.printf("outboundaries: %b, isleftUnc(t1): %b, isleftUnc(t2): %b\n", !outBoundaries(t1.x-1, t1.y), isLeftUncovered(t1), isLeftUncovered(t2));
 			if(!outBoundaries(t1.x-1, t1.y) && !isLeftUncovered(t1) && !isLeftUncovered(t2)){
-				System.err.printf("Here4\n");
 				if((t3 == null || isLeftUncovered(t3)) && t4 != null && !isLeftUncovered(t4))
 					needUncovering.add(new  Tuple(t4.x-1, t4.y));
 				else if((t4 == null || isLeftUncovered(t4)) && t3 != null && !isLeftUncovered(t3))
