@@ -253,11 +253,12 @@ public class World {
 			}
 		}
 
-		this.uncoverAll();
-		// System.out.println("Final Action: " + actionObj);
-		// System.out.println("Score: " + this.score);
-		// System.out.println("difficulty: " + this.difficulty);
-		// System.out.println("Moves Taken: " + this.moves);
+		// this.uncoverAll();
+		this.printBoardInfo();
+		System.out.println("Final Action: " + actionObj);
+		System.out.println("Score: " + this.score);
+		System.out.println("difficulty: " + this.difficulty);
+		System.out.println("Moves Taken: " + this.moves);
 		return new Results(this.score, this.difficulty.ordinal(), this.moves);
 	}
 	
