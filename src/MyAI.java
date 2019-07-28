@@ -95,9 +95,6 @@ public class MyAI extends AI {
 			safeTile.add(new Tuple(currX,currY));
 		}
 
-		if (numCovered == 0)
-			return new Action(Action.ACTION.LEAVE,1,1);
-
 		int countSafeTiles = safeTile.size();
 		boolean reduced = false;
 
@@ -146,11 +143,10 @@ public class MyAI extends AI {
 				findPatternVertical();
 
 				reduced = true;
-				// printBoard();
-
-				// printList(safeTile, "safeTile");
-				// actionStr = "L";
-				// valid = true;
+				
+			} else if (safeTile.size() > 0){
+				Random rand = new Random();
+				needUncovering.add(chooseRandom(safeTile.get(rand.nextInt(safeTile.size()))));
 			} else {
 				actionStr = "L";
 				valid = true;
@@ -253,10 +249,9 @@ public class MyAI extends AI {
 		Random rand = new Random();
 		int x = 0;
 		int y = 0;
-		
-		while(value(t.x+x, t.y+y) != 0){
-			x = rand.nextInt(2) - 1;
-			y = rand.nextInt(2) - 1;
+		while(outBoundaries(t.x+x, t.y+y) || value(t.x+x, t.y+y) != 0){
+			x = rand.nextInt(3) - 1;
+			y = rand.nextInt(3) - 1;
 		}
 		
 		return new Tuple(t.x+x, t.y+y);
@@ -474,8 +469,6 @@ public class MyAI extends AI {
 					needUncovering.add(new Tuple(t4.x-1, t4.y));
 				else if((t4 == null || isLeftUncovered(t4)) && t3 != null && !isLeftUncovered(t3))
 					needUncovering.add(new Tuple(t3.x-1, t3.y));
-
-				}
 			}
 		}
 	}
