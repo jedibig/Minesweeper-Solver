@@ -24,6 +24,7 @@ import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Random;
 
 public class MyAI extends AI {
 	// ########################## INSTRUCTIONS ##########################
@@ -238,6 +239,19 @@ public class MyAI extends AI {
 		return board[x-1][y-1];
 	}
 
+	private Tuple chooseRandom(Tuple t){
+		Random rand = new Random();
+		int x = 0;
+		int y = 0;
+		
+		while(value(t.x+x, t.y+y) != 0){
+			x = rand.nextInt(2) - 1;
+			y = rand.nextInt(2) - 1;
+		}
+		
+		return new Tuple(t.x+x, t.y+y);
+	}
+
 	// Check if surrounding tile with value 1 is uncovered
 	private void countFlagAndCoveredTiles(Tuple pair, int value){
 		LinkedList<Tuple> coveredTiles = new LinkedList<>();
@@ -426,7 +440,7 @@ public class MyAI extends AI {
 		else if(outBoundaries(t1.x+1, t1.y) || (isRightUncovered(t1) && isRightUncovered(t2) && (t3 == null || isRightUncovered(t3)) && (t4 == null || isRightUncovered(t4)))){
 			if(!outBoundaries(t1.x-1, t1.y) && !isLeftUncovered(t1) && !isLeftUncovered(t2)){
 				if((t3 == null || isLeftUncovered(t3)) && t4 != null && !isLeftUncovered(t4))
-					needUncovering.add(new  Tuple(t4.x-1, t4.y));
+					needUncovering.add(new Tuple(t4.x-1, t4.y));
 				else if((t4 == null || isLeftUncovered(t4)) && t3 != null && !isLeftUncovered(t3))
 					needUncovering.add(new Tuple(t3.x-1, t3.y));
 			}
