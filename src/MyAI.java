@@ -331,7 +331,7 @@ public class MyAI extends AI {
 				if(reducedListHorizontal.firstEntry().getValue() == 1 && (reducedListHorizontal.firstKey().y == pair1.y)){
 					//Check if second element is 1 (pattern 2-1)
 					pair2 = reducedListHorizontal.firstKey();
-					if(pair2.x == pair1.x-1){
+					if(pair1.x == pair2.x-1){
 						checkSurrounding12H(pair2, pair1);
 					}
 				}
@@ -355,10 +355,8 @@ public class MyAI extends AI {
 		if(outBoundaries(t1.x, t1.y-1) || (isBottomUncovered(t1) && isBottomUncovered(t2) && (t3 == null || isBottomUncovered(t3)) && (t4 == null || isBottomUncovered(t4)))){
 			if(!outBoundaries(t1.x, t1.y+1) && !isTopUncovered(t1) && !isTopUncovered(t2)){
 				if((t3 == null || isTopUncovered(t3)) && t4 != null && !isTopUncovered(t4)){
-					// System.err.println("Uncovering1 from " + t1 + t2);
 					needUncovering.add(new Tuple(t4.x, t4.y+1));
 				} else if((t4 == null || isTopUncovered(t4)) && t3 != null && !isTopUncovered(t3)){
-					// System.err.println("Uncovering2 from " + t1 + t2);
 					needUncovering.add(new Tuple(t3.x, t3.y+1));
 				}
 			}
@@ -366,10 +364,8 @@ public class MyAI extends AI {
 		else if(outBoundaries(t1.x, t1.y+1) || (isTopUncovered(t1) && isTopUncovered(t2) && (t3 == null || isTopUncovered(t3)) && (t4 == null || isTopUncovered(t4)))){
 			if(!outBoundaries(t1.x, t1.y-1) && !isBottomUncovered(t1) && !isBottomUncovered(t2)){
 				if((t3 == null || isBottomUncovered(t3)) && t4 != null && !isBottomUncovered(t4)){
-					// System.err.println("Uncovering3 from " + t1 + t2);
 					needUncovering.add(new Tuple(t4.x, t4.y-1));
 				} else if((t4 == null || isBottomUncovered(t4)) && t3 != null && !isBottomUncovered(t3)){
-					// System.err.println("Uncovering4 from " + t1 + t2);
 					needUncovering.add(new Tuple(t3.x, t3.y-1));
 				}
 			}
@@ -384,13 +380,11 @@ public class MyAI extends AI {
 		
 		if(outBoundaries(t1.x, t1.y-1) || (isBottomUncovered(t1) && isBottomUncovered(t2) && isBottomUncovered(t3))){
 			if(!outBoundaries(t1.x, t1.y+1) && !isTopUncovered(t1) && !isTopUncovered(t2) && !isTopUncovered(t3)){
-				// System.err.printf("flaggin (%d,%d) from: %s %s\n", t3.x, t3.y+1, t1, t2);
 				needFlagging.add(new Tuple(t3.x, t3.y+1));
 			}
 		}
 		else if(outBoundaries(t1.x, t1.y+1) || (isTopUncovered(t1) && isTopUncovered(t2) && isTopUncovered(t3))){
 			if(!outBoundaries(t1.x, t1.y-1) && !isBottomUncovered(t1) && !isBottomUncovered(t2) && !isBottomUncovered(t3)){
-				// System.err.printf("flaggin (%d,%d) from: %s %s\n", t3.x, t3.y-1, t1, t2);
 				needFlagging.add(new Tuple(t3.x, t3.y-1));
 			}
 		}
@@ -430,7 +424,7 @@ public class MyAI extends AI {
 				if(reducedListVertical.firstEntry().getValue() == 1 && (reducedListVertical.firstKey().x == pair1.x)){
 					//Check if second element is 1 (pattern 2-1)
 					pair2 = reducedListVertical.firstKey();
-					if(pair1.y == pair2.y-1){
+					if(pair2.y == pair1.y-1){
 						checkSurrounding12V(pair2, pair1);
 					}
 				}
@@ -454,11 +448,9 @@ public class MyAI extends AI {
 		if(outBoundaries(t1.x-1, t1.y) || (isLeftUncovered(t1) && isLeftUncovered(t2) && (t3 == null || isLeftUncovered(t3)) && (t4 == null || isLeftUncovered(t4)))){
 			if(!outBoundaries(t1.x+1, t1.y) && !isRightUncovered(t1) && !isRightUncovered(t2)){
 				if((t3 == null || isRightUncovered(t3)) && t4 != null && !isRightUncovered(t4)){
-					// System.err.println("Uncovering5 from " + t1 + t2);
 					needUncovering.add(new Tuple(t4.x+1,t4.y));
 				}
 				else if((t4 == null || isRightUncovered(t4)) && t3 != null && !isRightUncovered(t3)){
-					// System.err.println("Uncovering6 from " + t1 + t2);
 					needUncovering.add(new Tuple(t3.x+1, t3.y));
 				}
 			}
